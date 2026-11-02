@@ -1,0 +1,2567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>benclips™ — A Little Piece of Everything</title>
+  <meta name="description" content="Eight cartridges. A little piece of everything. Explore a tactile collection of sounds, stories, and curiosities.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%23ec6a27%27/%3E%3Ctext x=%278%27 y=%2725%27 font-size=%2726%27 font-family=%27Georgia%27 fill=%27white%27%3Eb%3C/text%3E%3C/svg%3E">
+  <!-- Tone.js for Retro Synth Audio & Tactile Foley -->
+
+  <!-- Google Fonts: Playfair Display (Editorial Serif), Inter (UI Sans), JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root { --font-serif:'Playfair Display',Georgia,serif; --font-sans:'Inter',sans-serif; --font-mono:'JetBrains Mono',monospace; --ink:#f8f0e7; --orange:#f47732; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { background:#30251d; color:var(--ink); font-family:var(--font-sans); min-height:100dvh; overflow:hidden; }
+    button { font:inherit; color:inherit; cursor:pointer; border:0; background:none; -webkit-tap-highlight-color:transparent; }
+    button:focus-visible, a:focus-visible, input:focus-visible { outline:2px solid #ffb16c; outline-offset:5px; }
+    button:disabled { cursor:wait; opacity:.45; }
+    button { transition:color .2s,background .2s,transform .2s; }
+    button:active { transform:translateY(1px); }
+    .studio-backdrop { position:fixed; inset:0; background:url('IMG_7237.WEBP') center center/cover no-repeat; z-index:0; }
+    .studio-backdrop:after { content:''; position:absolute; inset:0; background:linear-gradient(90deg,rgba(14,12,11,.65),rgba(14,12,11,.08) 48%,transparent 70%),linear-gradient(180deg,rgba(16,13,11,.22),transparent 30%,transparent 70%,rgba(28,17,10,.22)); }
+    #canvas-container { position:fixed; inset:0; z-index:1; }
+    canvas { display:block; width:100%; height:100%; touch-action:pinch-zoom; }
+    .site-header { position:fixed; top:29px; left:4.15%; right:3.4%; z-index:3; display:flex; align-items:flex-start; justify-content:space-between; pointer-events:none; }
+    .site-header>* { pointer-events:auto; }
+    .brand { white-space:nowrap; font-size:36px; font-weight:800; letter-spacing:-1.8px; line-height:1; }
+    .brand sup { font-size:10px; letter-spacing:0; vertical-align:top; display:inline-block; margin:3px 0 0 4px; }
+    .brand-caption { font-size:9px; letter-spacing:.42em; margin-top:15px; }
+    nav { display:flex; gap:38px; padding-top:20px; }
+    nav button { font-size:10px; font-weight:500; letter-spacing:.3em; }
+    nav button:hover { color:#ffae78; }
+    .header-controls { display:flex; align-items:center; gap:8px; }
+    .editorial-pill { border:1px solid #dcd2c178; background:#3b2a2240; backdrop-filter:blur(12px); }
+    .editorial-pill:hover { background:#f9eadb20; }
+    #btn-sound { white-space:nowrap; display:flex; align-items:center; gap:11px; border-radius:28px; padding:14px 23px; font-size:10px; letter-spacing:.2em; min-height:44px; }
+    #btn-sound svg { width:17px; height:17px; color:#f9c399; }
+    #btn-info-mobile { display:none; }
+    #editorial-hero { position:fixed; z-index:2; left:4.15%; top:15%; width:35%; pointer-events:none; }
+    .archive-index { font-family:var(--font-mono); font-size:11px; letter-spacing:.18em; margin-bottom:19px; }
+    #state-badge { display:block; position:fixed; left:4.15%; bottom:23px; font-family:var(--font-mono); font-size:9px; letter-spacing:.12em; opacity:.8; }
+    h1 { font-family:var(--font-serif); font-size:clamp(46px,5.2vw,82px); font-weight:500; line-height:.99; letter-spacing:-.045em; }
+    #hero-subtitle { font-family:Georgia,serif; font-size:clamp(15px,1.3vw,20px); line-height:1.5; letter-spacing:.065em; max-width:425px; margin-top:25px; }
+    .hero-rule { width:220px; height:1px; background:#eed8c338; margin:26px 0 20px; }
+    .instructions { list-style:none; display:flex; flex-direction:column; gap:20px; }
+    .instructions li, .instructions button { display:flex; align-items:center; gap:20px; font-size:9px; letter-spacing:.19em; text-align:left; line-height:1.6; }
+    .instructions button { pointer-events:auto; }
+    .instructions svg { width:17px; height:17px; flex-shrink:0; }
+    .instructions button:hover { color:#ffb16c; }
+    #instruction-eject svg { color:#f9af70; }
+    .collection { position:fixed; inset:0; z-index:2; pointer-events:none; overflow:hidden; }
+    .collection-heading { position:absolute; left:4.2%; right:4.2%; top:var(--collection-top,66%); display:flex; align-items:center; justify-content:space-between; }
+    .collection-heading h2 { font-size:10px; font-weight:500; letter-spacing:.32em; }
+    .collection-navigation { display:flex; gap:7px; align-items:center; pointer-events:auto; }
+    .collection-navigation span { font-size:9px; letter-spacing:.2em; margin-right:7px; }
+    .collection-navigation button { width:34px; height:34px; display:grid; place-items:center; border-radius:9px; }
+    .collection-navigation svg { width:15px; height:15px; }
+    #dock-labels-grid { position:absolute; inset:0; pointer-events:none; }
+    .cartridge-label { position:absolute; padding:8px 4px; text-align:left; pointer-events:auto; min-height:52px; transform:translateX(-50%); }
+    .cartridge-label:active { transform:translateX(-50%) translateY(1px); }
+    .cartridge-label strong { display:block; font-size:12px; font-weight:500; }
+    .cartridge-label small { display:block; font-size:8px; letter-spacing:.11em; margin-top:7px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
+    .cartridge-label:after { content:''; display:block; width:0; height:0; margin-top:11px; border-left:5px solid transparent; border-right:5px solid transparent; border-bottom:7px solid var(--ink); opacity:0; }
+    .cartridge-label[aria-pressed=true]:after { opacity:1; }
+    .cartridge-label:hover strong { color:#ffba91; }
+    #slot-drop-hint { position:fixed; z-index:4; pointer-events:none; opacity:0; background:#29180de8; border:1px solid #ffb16c; color:#ffe2c4; border-radius:6px; padding:10px 13px; font:10px var(--font-mono); }
+    .hidden { display:none!important; }
+    .flex { display:flex; }
+    #info-modal { position:fixed; inset:0; z-index:5; background:#100d09a8; backdrop-filter:blur(10px); align-items:center; justify-content:center; padding:22px; }
+    .modal-panel { position:relative; max-width:560px; width:100%; max-height:85dvh; overflow:auto; background:#271f19; border:1px solid #d2b89c55; border-radius:18px; padding:44px 35px 35px; }
+    #btn-close-modal { position:absolute; right:13px; top:11px; width:36px; height:36px; font-size:22px; }
+    #modal-content h2 { font:500 32px var(--font-serif); margin:10px 0 22px; }
+    #modal-content p, #modal-content li { font-size:13px; line-height:1.8; margin-bottom:15px; color:#e1d7cd; }
+    #modal-content ul { list-style:none; }
+    #modal-content>span { font:10px var(--font-mono); letter-spacing:.15em; color:#ffac76; }
+    .skip-link,.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    .skip-link:focus { position:fixed; left:20px; top:15px; z-index:8; width:auto; height:auto; clip:auto; background:#271f19; padding:12px; }
+    #screen-controls { text-shadow:0 1px 6px #140c04; position:fixed; z-index:3; left:var(--screen-x,58%); top:var(--screen-y,60%); transform:translateX(-50%); display:flex; gap:15px; align-items:center; }
+    #screen-controls button { font-size:9px; letter-spacing:.1em; padding:10px 3px; border-bottom:1px solid #f7e0c15c; min-height:44px; }
+    #screen-controls button:hover { color:#ffba91; }
+    #screen-controls input { width:72px; accent-color:var(--orange); }
+    .loading { position:fixed; left:58%; top:40%; z-index:2; font:10px var(--font-mono); letter-spacing:.15em; pointer-events:none; }
+    .interaction-controls { display:flex; gap:12px; margin:20px 0; }
+    .interaction-controls button { border:1px solid #cfaa8266; border-radius:6px; min-width:52px; min-height:52px; font:18px var(--font-mono); padding:10px; }
+    .interaction-controls button:hover,.interaction-controls button[aria-pressed=true] { background:#bf663a44; border-color:#ed9e6c; }
+    .interaction-controls small { display:block; font-size:9px; margin-top:5px; opacity:.6; }
+    .archive-pagination { display:flex; justify-content:space-between; align-items:center; margin-top:26px; gap:15px; }
+    .archive-pagination button,.archive-action { border:1px solid #9b7b6255; border-radius:5px; padding:12px 14px; font-size:11px; min-height:44px; }
+    .archive-pagination button:hover,.archive-action:hover { background:#fff1; }
+    .archive-pagination span { font:10px var(--font-mono); opacity:.7; }
+    #modal-content .audio-caption { margin:22px 0 0; font-size:10px; color:#bdb0a3; }
+    #interaction-feedback { border-left:2px solid var(--orange); padding-left:14px; }
+    .no-scrollbar { scrollbar-width:none; }
+    @media(max-width:1000px) and (min-width:901px) { nav { gap:18px; } nav button { font-size:8px; } .brand { font-size:30px; } #editorial-hero { width:37%; top:17%; } h1 { font-size:5.4vw; } .instructions li,.instructions button { font-size:8px; gap:12px; } #hero-subtitle { font-size:15px; } .cartridge-label small { font-size:6px; } }
+    @media(max-width:900px) {
+      .studio-backdrop { background-image:url('IMG_7235.WEBP'); background-size:cover; background-position:center top; transform:scale(1.06); transform-origin:top center; }
+      .studio-backdrop:after { background:linear-gradient(180deg,#140f0c66,transparent 55%,#170d0799); }
+      .site-header { top:23px; left:24px; right:23px; }
+      .brand { font-size:28px; letter-spacing:-1.5px; }
+      .brand-caption { font-size:6px; margin-top:10px; letter-spacing:.32em; }
+      nav { display:none; }
+      #btn-sound { padding:10px 12px; font-size:8px; gap:7px; min-height:36px; }
+      #btn-sound svg { width:13px; height:13px; }
+      #btn-info-mobile { display:block; font-size:8px; letter-spacing:.12em; padding:10px; border-radius:20px; min-height:36px; }
+      #editorial-hero { left:25px; right:25px; top:113px; width:auto; }
+      .archive-index { font-size:8px; margin-bottom:12px; }
+      h1 { font-size:39px; line-height:1; max-width:310px; }
+      #hero-subtitle { font-size:11px; max-width:260px; margin-top:13px; line-height:1.5; letter-spacing:.04em; }
+      .hero-rule,.instructions { display:none; }
+      .collection-heading { left:24px; right:24px; }
+      .collection-heading h2 { font-size:8px; letter-spacing:.23em; }
+      .collection-navigation span { font-size:7px; letter-spacing:.1em; }
+      .collection-navigation button { height:40px; width:40px; }
+      .cartridge-label strong { font-size:11px; }
+      .cartridge-label small { font-size:6px; }
+      #state-badge { left:24px; bottom:15px; font-size:7px; }
+      #screen-controls { gap:12px; }
+      #screen-controls button { font-size:8px; white-space:nowrap; }
+      #screen-controls input { width:55px; }
+      .loading { left:34%; top:45%; }
+      .modal-panel { padding:42px 24px 24px; }
+    }
+    @media(max-height:650px) and (min-width:901px) { #editorial-hero { top:20%; } h1 { font-size:42px; } #hero-subtitle { font-size:12px; margin-top:15px; } .hero-rule { margin:14px 0; } .instructions { gap:9px; } .site-header { top:18px; } .brand { font-size:28px; } .brand-caption { margin-top:8px; font-size:7px; } }
+    @media(max-width:900px) and (min-width:501px) and (min-height:701px) {
+      #editorial-hero { top:125px; left:35px; }
+      h1 { font-size:52px; max-width:420px; }
+      #hero-subtitle { font-size:15px; max-width:355px; }
+      .site-header { left:35px; right:35px; }
+      .cartridge-label strong { font-size:12px; }
+      .cartridge-label small { font-size:8px; }
+    }
+    @media(max-width:500px) and (max-height:700px) {
+      .site-header { top:20px; left:23px; right:23px; }
+      .brand { font-size:24px; }
+      #btn-sound { font-size:7px; padding:10px; }
+      #btn-info-mobile { padding:9px; font-size:7px; }
+      .header-controls { gap:6px; }
+      #editorial-hero { top:86px; }
+      .archive-index { font-size:7px; margin-bottom:9px; }
+      h1 { font-size:29px; max-width:220px; }
+      #hero-subtitle { display:none; }
+      .cartridge-label { min-height:30px; padding-top:6px; }
+      .cartridge-label small,.cartridge-label:after,#state-badge { display:none; }
+      .collection-heading h2 { white-space:nowrap; font-size:7px; }
+      .collection-navigation span { display:none; }
+    }
+    @media(max-height:600px) and (min-width:501px) {
+      .studio-backdrop { background-image:url('IMG_7237.WEBP'); background-size:cover; background-position:center; transform:none; }
+      .site-header { top:18px; left:4.15%; right:3.4%; }
+      .brand { font-size:28px; }
+      nav { display:none; }
+      #btn-info-mobile { display:block; padding:12px; border-radius:24px; font-size:9px; }
+      #editorial-hero { top:85px; left:4.15%; width:34%; }
+      .archive-index { font-size:8px; margin-bottom:15px; }
+      h1 { font-size:34px; }
+      #hero-subtitle { display:block; font-size:12px; max-width:260px; margin-top:14px; }
+      .hero-rule,.instructions { display:none; }
+      #screen-controls { left:auto; right:7%; top:120px; transform:none; flex-direction:column; gap:2px; }
+      #screen-controls button { padding:9px 8px; }
+      .cartridge-label strong { font-size:9px; }
+      .cartridge-label small { display:none; }
+      .cartridge-label:after { margin-top:4px; border-bottom-width:5px; }
+      .collection-heading { left:4.2%; right:4.2%; }
+      .collection-heading h2 { font-size:8px; }
+      #state-badge { display:none; }
+    }
+    @media(prefers-reduced-motion:reduce) { *,*:before,*:after { animation:none!important; transition:none!important; } }
+  </style>
+
+  <script>
+    window.addEventListener('error', () => {
+      const loading=document.getElementById('scene-loading');
+      if(loading && !loading.hidden) loading.textContent='The 3D archive could not load. Check your connection and WebGL support, then reload.';
+    });
+  </script>
+  <!-- Pinned browser modules keep this a single-file app without a build step. -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.164.1/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.164.1/examples/jsm/",
+        "react": "https://esm.sh/react@18.3.1",
+        "react/jsx-runtime": "https://esm.sh/react@18.3.1/jsx-runtime",
+        "react-dom": "https://esm.sh/react-dom@18.3.1?external=react",
+        "react-dom/client": "https://esm.sh/react-dom@18.3.1/client?external=react",
+        "@react-three/fiber": "https://esm.sh/@react-three/fiber@8.17.10?external=react,react-dom,three"
+      }
+    }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#dock-labels-grid">Skip to the collection</a>
+  <div class="studio-backdrop" aria-hidden="true"></div>
+  <header class="site-header">
+    <div><div class="brand">benclips<sup>TM</sup></div><p class="brand-caption">A 3D INTERACTIVE TWIN</p></div>
+    <nav aria-label="Main navigation"><button data-nav="collection">COLLECTION</button><button data-nav="about">ABOUT</button><button data-nav="build">BEHIND THE BUILD</button></nav>
+    <div class="header-controls"><button id="btn-info-mobile" class="editorial-pill">INFO</button><button id="btn-sound" class="editorial-pill" aria-label="Enable sound" aria-pressed="false"><svg id="sound-wave-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 10v4m4-8v12m4-15v18m4-14v10m4-7v4"/></svg><span id="sound-label">SOUND OFF</span></button></div>
+  </header>
+  <main>
+    <aside id="editorial-hero">
+      <p class="archive-index" id="hero-counter">001 — 008</p>
+      <h1>A little piece<br>of everything.</h1>
+      <p id="hero-subtitle">An interactive collection of sounds, memories, curiosities and obsessions.</p>
+      <div class="hero-rule"></div>
+      <ul class="instructions">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 2v20M2 12h20M9 5l3-3 3 3M9 19l3 3 3-3M5 9l-3 3 3 3M19 9l3 3-3 3"/></svg><span>DRAG A CARTRIDGE TO LOAD</span></li>
+        <li><button id="instruction-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4v16l12-8z"/></svg><span>TAP SCREEN TO PLAY / PAUSE</span></button></li>
+        <li><button id="instruction-eject"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m5 5 7 7-7 7m7-14 7 7-7 7"/></svg><span>PRESS ORANGE BUTTON TO EJECT</span></button></li>
+      </ul>
+    </aside>
+    <div id="canvas-container" role="img" aria-label="Transparent collectible media player. Use the cartridge buttons and screen controls for keyboard access."></div>
+    <div id="scene-loading" class="loading" role="status">ASSEMBLING THE ARCHIVE…</div>
+    <span id="state-badge" role="status" aria-live="polite">READY</span>
+    <div id="slot-drop-hint">Release to insert</div>
+    <div id="screen-controls" aria-label="Player controls"><button id="accessible-play">Load / play</button><button id="archive-toggle" aria-pressed="false">Field notes</button><button id="accessible-eject" aria-label="Eject cartridge">Eject ↗</button></div>
+    <section class="collection" aria-label="The cartridge collection">
+      <div class="collection-heading"><h2>THE COLLECTION</h2><div class="collection-navigation"><span>DRAG OR TAP TO LOAD</span><button id="btn-prev-cart" class="editorial-pill" aria-label="Previous cartridge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m15 5-7 7 7 7"/></svg></button><button id="btn-next-cart" class="editorial-pill" aria-label="Next cartridge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m9 5 7 7-7 7"/></svg></button></div></div>
+      <div id="dock-labels-scroll"><div id="dock-labels-grid" tabindex="-1"></div></div>
+    </section>
+  </main>
+  <div id="info-modal" class="hidden" role="dialog" aria-modal="true" aria-label="About the archive"><div class="modal-panel"><button id="btn-close-modal" aria-label="Close dialog">×</button><div id="modal-content"></div></div></div>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import React from 'react';
+    import { createRoot, useFrame } from '@react-three/fiber';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+    import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+    // ============================================================================
+    // 1. DECLARATIVE 8-CATEGORY CARTRIDGE REGISTRY
+    // ============================================================================
+    const CARTRIDGE_REGISTRY = [
+      {
+        id: '001',
+        category: 'Nostalgia',
+        subtitle: "MUSIC, 90'S, CULTURE",
+        artist: 'blink-182',
+        title: 'All The Small Things',
+        duration: '2:48',
+        totalSecs: 168,
+        bpm: 148,
+        experienceType: 'nostalgia',
+        themeColor: '#ff5e8e',
+        skyColors: ['#4a1c40', '#d6458b', '#ff8c61', '#1e0e29'],
+        sunColors: ['#fff6a9', '#ff9a52', '#e84878'],
+        iconType: 'palm',
+        storyNotes: ['TRL After School • 1999', '120-Minute Mixtape Side A', ' Transparent Atomic Purple'],
+        melody: [
+          { time: '0:0:0', note: ['C5', 'G4'], dur: '8n' },
+          { time: '0:0:2', note: ['C5', 'G4'], dur: '8n' },
+          { time: '0:1:0', note: ['B4', 'G4'], dur: '8n' },
+          { time: '0:1:2', note: ['C5', 'G4'], dur: '8n' },
+          { time: '0:2:0', note: ['D5', 'G4'], dur: '4n' },
+          { time: '0:3:0', note: ['C5', 'E4'], dur: '4n' },
+          { time: '1:0:0', note: ['A4', 'F4'], dur: '4n' },
+          { time: '1:1:0', note: ['A4', 'F4'], dur: '8n' },
+          { time: '1:1:2', note: ['B4', 'G4'], dur: '8n' },
+          { time: '1:2:0', note: ['C5', 'F4'], dur: '4n' },
+          { time: '1:3:0', note: ['G4', 'E4'], dur: '4n' }
+        ]
+      },
+      {
+        id: '002',
+        category: 'Gaming',
+        subtitle: 'RUNESCAPE, WOW, NINTENDO',
+        artist: 'Ian Taylor',
+        title: 'Sea Shanty 2 (OSRS)',
+        duration: '2:14',
+        totalSecs: 134,
+        bpm: 132,
+        experienceType: 'gaming',
+        themeColor: '#34d399',
+        skyColors: ['#0d261f', '#1f5e45', '#68b684', '#091714'],
+        sunColors: ['#e9ffdb', '#74c69d', '#2d6a4f'],
+        iconType: 'tree',
+        storyNotes: ['Port Sarim Docks • Lv. 99', 'Azeroth Flight Path', 'GameCube Boot Chime'],
+        melody: [
+          { time: '0:0:0', note: ['D5', 'G4'], dur: '8n' },
+          { time: '0:0:2', note: ['B4', 'G4'], dur: '8n' },
+          { time: '0:1:0', note: ['G4', 'D4'], dur: '4n' },
+          { time: '0:2:0', note: ['A4', 'D4'], dur: '8n' },
+          { time: '0:2:2', note: ['B4', 'G4'], dur: '8n' },
+          { time: '0:3:0', note: ['C5', 'E4'], dur: '4n' },
+          { time: '1:0:0', note: ['D5', 'G4'], dur: '4n' },
+          { time: '1:1:0', note: ['B4', 'G4'], dur: '4n' },
+          { time: '1:2:0', note: ['G4', 'D4'], dur: '2n' }
+        ]
+      },
+      {
+        id: '003',
+        category: 'Technology',
+        subtitle: 'HARDWARE, SOFTWARE, AI',
+        artist: 'Kernel.sys',
+        title: 'Silicon & Neural Weights',
+        duration: '3:12',
+        totalSecs: 192,
+        bpm: 126,
+        experienceType: 'technology',
+        themeColor: '#e879f9',
+        skyColors: ['#240b36', '#9d174d', '#f472b6', '#150725'],
+        sunColors: ['#fbcfe8', '#e879f9', '#701a75'],
+        iconType: 'monitor',
+        storyNotes: ['PCB Trace Routing • Rev 4', 'Local LLM Token Stream', 'Custom Mechanical Switches'],
+        melody: [
+          { time: '0:0:0', note: ['E5', 'A4'], dur: '16n' },
+          { time: '0:0:2', note: ['B4', 'E4'], dur: '16n' },
+          { time: '0:1:0', note: ['C5', 'A4'], dur: '8n' },
+          { time: '0:2:0', note: ['G5', 'C5'], dur: '8n' },
+          { time: '0:3:0', note: ['E5', 'B4'], dur: '4n' },
+          { time: '1:0:0', note: ['A4', 'E4'], dur: '2n' }
+        ]
+      },
+      {
+        id: '004',
+        category: 'Horticulture',
+        subtitle: 'PLANTS, SOIL, GARDENING',
+        artist: 'Mort Garson',
+        title: 'Plantasia (Greenhouse)',
+        duration: '3:24',
+        totalSecs: 204,
+        bpm: 98,
+        experienceType: 'horticulture',
+        themeColor: '#6ee7b7',
+        skyColors: ['#1b4332', '#52b788', '#b7e4c7', '#081c15'],
+        sunColors: ['#ffffff', '#d8f3dc', '#74c69d'],
+        iconType: 'sprout',
+        storyNotes: ['Monstera Albo Variegata', 'Aroid Perlite Bark Mix', 'Morning Mist Humidity 72%'],
+        melody: [
+          { time: '0:0:0', note: ['G4', 'C4'], dur: '4n' },
+          { time: '0:1:0', note: ['B4', 'E4'], dur: '4n' },
+          { time: '0:2:0', note: ['D5', 'G4'], dur: '4n' },
+          { time: '0:3:0', note: ['E5', 'C5'], dur: '4n' },
+          { time: '1:0:0', note: ['D5', 'B4'], dur: '2n' }
+        ]
+      },
+      {
+        id: '005',
+        category: 'Creative',
+        subtitle: 'DESIGN, ART, MUSIC',
+        artist: 'Midnight Studio',
+        title: 'Nocturne in Three.js',
+        duration: '2:56',
+        totalSecs: 176,
+        bpm: 110,
+        experienceType: 'creative',
+        themeColor: '#60a5fa',
+        skyColors: ['#040814', '#0b1d51', '#1d3557', '#02040a'],
+        sunColors: ['#ffffff', '#dbeafe', '#60a5fa'],
+        iconType: 'moon',
+        storyNotes: ['Industrial Design Sketchbook', 'PBR Shader Experiments', 'Late Night Synth Jam'],
+        melody: [
+          { time: '0:0:0', note: ['F4', 'A3'], dur: '4n' },
+          { time: '0:1:0', note: ['A4', 'C4'], dur: '4n' },
+          { time: '0:2:0', note: ['C5', 'E4'], dur: '4n' },
+          { time: '0:3:0', note: ['E5', 'A4'], dur: '4n' },
+          { time: '1:0:0', note: ['D5', 'F4'], dur: '2n' }
+        ]
+      },
+      {
+        id: '006',
+        category: 'Dogs',
+        subtitle: 'CHIHUAHUAS, PETS',
+        artist: 'Tiny Paws Club',
+        title: 'Sunbeam Naptime',
+        duration: '1:58',
+        totalSecs: 118,
+        bpm: 120,
+        experienceType: 'dogs',
+        themeColor: '#fbbf24',
+        skyColors: ['#6b4c35', '#b08968', '#ddb892', '#2b1d12'],
+        sunColors: ['#fffbeb', '#fde68a', '#d97706'],
+        iconType: 'paw',
+        storyNotes: ['Apple-Head Chihuahua', 'Blanket Burrow Champion', 'Treat Jar Radar Active'],
+        melody: [
+          { time: '0:0:0', note: ['C5', 'E4'], dur: '8n' },
+          { time: '0:0:2', note: ['E5', 'G4'], dur: '8n' },
+          { time: '0:1:0', note: ['G5', 'C5'], dur: '4n' },
+          { time: '0:2:0', note: ['E5', 'G4'], dur: '8n' },
+          { time: '0:3:0', note: ['C5', 'E4'], dur: '4n' }
+        ]
+      },
+      {
+        id: '007',
+        category: 'Anime',
+        subtitle: 'ANIME, POKÉMON, YU-GI-OH',
+        artist: 'Kanto Symphony',
+        title: ' Saffron City Dusk',
+        duration: '3:05',
+        totalSecs: 185,
+        bpm: 138,
+        experienceType: 'anime',
+        themeColor: '#f472b6',
+        skyColors: ['#1d1135', '#72286f', '#f28482', '#120b21'],
+        sunColors: ['#ffedd8', '#f28482', '#b5179e'],
+        iconType: 'pagoda',
+        storyNotes: ['1st Ed. Holo Charizard', 'Duel Disk Prototype', 'Toonami Midnight Run'],
+        melody: [
+          { time: '0:0:0', note: ['A4', 'E4'], dur: '8n' },
+          { time: '0:0:2', note: ['C5', 'A4'], dur: '8n' },
+          { time: '0:1:0', note: ['D5', 'B4'], dur: '8n' },
+          { time: '0:1:2', note: ['E5', 'C5'], dur: '8n' },
+          { time: '0:2:0', note: ['G5', 'D5'], dur: '4n' },
+          { time: '0:3:0', note: ['E5', 'B4'], dur: '4n' }
+        ]
+      },
+      {
+        id: '008',
+        category: 'Life',
+        subtitle: 'STORIES, IDEAS, EXPERIMENTS',
+        artist: 'Field Notes',
+        title: 'Alpine Ridge Journal',
+        duration: '3:42',
+        totalSecs: 222,
+        bpm: 108,
+        experienceType: 'life',
+        themeColor: '#93c5fd',
+        skyColors: ['#2b3d4f', '#6c8ba4', '#cbd5e1', '#111827'],
+        sunColors: ['#ffffff', '#e2e8f0', '#64748b'],
+        iconType: 'mountain',
+        storyNotes: ['35mm Film Contact Sheet', 'Coffee & Sketchbook', 'Everything Is Connected'],
+        melody: [
+          { time: '0:0:0', note: ['D4', 'A3'], dur: '4n' },
+          { time: '0:1:0', note: ['F#4', 'D4'], dur: '4n' },
+          { time: '0:2:0', note: ['A4', 'E4'], dur: '4n' },
+          { time: '0:3:0', note: ['D5', 'F#4'], dur: '2n' }
+        ]
+      }
+    ];
+
+    // ============================================================================
+    const EXPERIENCES = {
+      nostalgia:{mode:'audio',title:'After-school frequencies',entries:[
+        {title:'The mixtape ritual',text:'A blank tape, a radio, and a finger hovering over record. The gaps between songs were part of the collection, too.'},
+        {title:'Objects that kept a moment',text:'Transparent plastic made the circuitry part of the story. You could see the small machine doing its work.'},
+        {title:'A sound, remembered',text:'An original synthesized chiptune study, inspired by the texture of pocket electronics. The archive contains no commercial song recordings.'}
+      ]},
+      gaming:{mode:'interactive',title:'One more save point',entries:[
+        {title:'A tiny memory quest',text:'Remember the four-button code: 1 → 3 → 2 → 1. Enter it below. A wrong turn resets the sequence; there is always another try.'},
+        {title:'Worlds worth returning to',text:'A dock in Port Sarim. A familiar login screen. The place matters as much as the quest: games can become little rooms in memory.'},
+        {title:'The sound before the game',text:'A console boot chime is a miniature promise. A handful of notes says that the everyday world is about to become somewhere else.'}
+      ],action:{kind:'memory',sequence:[1,3,2,1],label:'Memory quest'}},
+      technology:{mode:'interactive',title:'Under the clear shell',entries:[
+        {title:'Four bits, sixteen possibilities',text:'Toggle the four switches. Their place values are 8, 4, 2, and 1. Watch a binary pattern turn into a decimal number.'},
+        {title:'Make the invisible visible',text:'A clear enclosure reveals traces, fasteners, and connectors. Good hardware lets the construction become part of the character.'},
+        {title:'Small systems, clear rules',text:'This player moves through explicit states. An insertion must finish before another begins, just as a physical mechanism needs time to settle.'}
+      ],action:{kind:'bits',label:'Binary workbench'}},
+      horticulture:{mode:'visual',title:'A slower kind of progress',entries:[
+        {title:'A virtual seedling',text:'Advance this small growth study from seed to canopy. It is a visual sketch of patience, rather than a plant-care schedule.'},
+        {title:'Look before you water',text:'A leaf, a new root, the weight of a pot: plant keeping begins with noticing. The quiet changes are often the most interesting ones.'},
+        {title:'A place by the window',text:'Plants give a room another clock. Light travels across the leaves while the rest of the desk stays still.'}
+      ],action:{kind:'step',label:'Advance growth study',messages:['Seed · a beginning','Root · finding a foothold','Shoot · reaching for light','Leaf · unfolding slowly','Canopy · room to grow']}},
+      creative:{mode:'visual',title:'The midnight sketchbook',entries:[
+        {title:'Three ways to see the night',text:'Change the palette of this little nocturne. The composition stays the same; the feeling changes with the light.'},
+        {title:'Keep the rough edges',text:'A sketch can hold an idea before it has a name. The useful version is often the one made before everything became too polished.'},
+        {title:'A smaller canvas',text:'Constraints can be generous. A square display, a few colors, and a short melody leave space to notice the details.'}
+      ],action:{kind:'step',label:'Change nocturne palette',messages:['Blue hour','Ember night','Forest after dark'],frames:[['#040814','#0b1d51','#1d3557','#02040a'],['#29121e','#8c3b53','#e69972','#160b16'],['#051d1c','#145c52','#70a89a','#041412']]}},
+      dogs:{mode:'story',title:'Small dog, large universe',entries:[
+        {title:'The sunbeam department',text:'Somewhere on the floor, a patch of afternoon light becomes the most important place in the room. A small dog has already found it.'},
+        {title:'A very serious lookout',text:'The ears turn first. Then the head. A sound beyond the window becomes an investigation, conducted with complete commitment.'},
+        {title:'Objects of great importance',text:'A blanket, a favorite corner, and the familiar sound of the treat jar. An ordinary room can hold a whole world.'}
+      ]},
+      anime:{mode:'visual',title:'Postcards from an imagined city',entries:[
+        {title:'Between the episodes',text:'A mountain, a roofline, a changing sky. The quiet establishing shot can stay in memory long after the plot has faded.'},
+        {title:'A pocket-sized world',text:'Trading cards and handheld adventures make entire worlds portable. A small object becomes a doorway into a much bigger story.'},
+        {title:'Choose the hour',text:'Turn the sky from dawn to dusk. This illustrated scene is an original study of the spaces between adventures.'}
+      ],action:{kind:'step',label:'Change the hour',messages:['Dusk in the city','The first light','After midnight'],frames:[['#1d1135','#72286f','#f28482','#120b21'],['#533e58','#dc8978','#f8d9a0','#25253a'],['#090d27','#222458','#6779a0','#06091c']]}},
+      life:{mode:'story',title:'Notes from the in-between',entries:[
+        {title:'Leave room for a detour',text:'Not every curiosity needs to become a project. Some things are worth keeping simply because they made an ordinary day more interesting.'},
+        {title:'A contact sheet of ideas',text:'A sentence in a notebook. A shape seen on a walk. An unfinished experiment. An archive can hold the fragments without forcing a conclusion.'},
+        {title:'A little piece of everything',text:'The categories overlap. A game becomes a memory; a plant becomes a drawing; an object becomes an idea. That is the point of the collection.'}
+      ]}
+    };
+    CARTRIDGE_REGISTRY.forEach(track => {
+      track.experienceId = track.experienceType;
+      track.artwork = {renderer:track.iconType,alt:`${track.category} illustrated cartridge artwork`};
+      track.theme = {accent:track.themeColor,sky:track.skyColors,sun:track.sunColors};
+    });
+
+    // 2. GUARDED INTERACTION STATE MACHINE
+    // States: 'idle' | 'selected' | 'dragging' | 'aligning' | 'inserting' | 'booting' | 'active' | 'ejecting'
+    // ============================================================================
+    const AppState = {
+      phase: 'idle',            // Assembly completes before the first selection
+      selectedIndex: 0,         // Highlighted cartridge in the dock
+      insertedIndex: -1,        // Cartridge currently inside the player (-1 if none)
+      pendingInsertIndex: -1,   // Queued cartridge if swapping while one is already inserted
+      bootTimer: 0,             // Short boot animation timer before active experience
+      screenViewMode: 'player', // 'player' | 'archive' (toggled by 3-dots icon on screen)
+      soundEnabled: false,
+      isPlayingAudio: false,
+      playbackProgress: 0,
+      screenPage: 0,
+      interactionCount: 0,
+      challengeProgress: 0,
+      challengeFeedback: 'Enter the four-button code.'
+    };
+
+    const TRANSITIONS = Object.freeze({
+      idle:['selected','aligning','dragging'],
+      selected:['idle','selected','aligning','dragging'],
+      dragging:['aligning','selected','active','ejecting'],
+      aligning:['dragging','selected','active','inserting','ejecting'],
+      inserting:['booting'], booting:['active'],
+      active:['active','dragging','ejecting'], ejecting:['selected','aligning']
+    });
+    const isBusy = () => ['inserting','booting','ejecting'].includes(AppState.phase) ||
+      (AppState.phase === 'aligning' && cartridgeMeshes.some(m => m.userData.motionState === 'inserting'));
+    function transitionState(nextPhase) {
+      if (!TRANSITIONS[AppState.phase]?.includes(nextPhase)) return false;
+      AppState.phase = nextPhase;
+      updateEditorialUI();
+      return true;
+    }
+
+    // ============================================================================
+    // 3. SYNTH AUDIO & MECHANICAL FOLEY ENGINE (Tone.js)
+    // ============================================================================
+    let audioInitialized = false;
+    let synthLoop = null;
+    let polySynth = null;
+    let foleySynth = null;
+
+    let audioLoading;
+    let audioInitPromise;
+    function initAudio() {
+      if (!AppState.soundEnabled || audioInitialized) return Promise.resolve();
+      if (!audioInitPromise) audioInitPromise=initializeAudio().finally(()=>{audioInitPromise=null;});
+      return audioInitPromise;
+    }
+    async function initializeAudio() {
+      if (!AppState.soundEnabled || audioInitialized) return;
+      if (!audioLoading) audioLoading = new Promise((resolve,reject) => {
+        const script=document.createElement('script');
+        script.src='https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js';
+        script.onload=resolve; script.onerror=reject; document.head.appendChild(script);
+      });
+      try {
+        await audioLoading;
+        if (audioInitialized) return;
+        await Tone.start();
+        polySynth = new Tone.PolySynth(Tone.Synth, {
+          oscillator: { type: 'square' },
+          envelope: { attack: 0.012, decay: 0.16, sustain: 0.12, release: 0.24 }
+        });
+        const filter = new Tone.Filter(1950, 'bandpass').toDestination();
+        polySynth.connect(filter);
+        polySynth.volume.value = -13;
+
+        foleySynth = new Tone.MembraneSynth({
+          pitchDecay: 0.02,
+          octaves: 3,
+          envelope: { attack: 0.001, decay: 0.08, sustain: 0 }
+        }).toDestination();
+        foleySynth.volume.value = -10;
+
+        audioInitialized = true;
+      } catch (e) {
+        AppState.soundEnabled = false;
+        soundLabel.textContent = 'SOUND UNAVAILABLE';
+        audioLoading = null;
+      }
+    }
+
+    function playMechanicalSound(type = 'click') {
+      if (!AppState.soundEnabled || !audioInitialized) return;
+      try {
+        if (type === 'pickup') foleySynth?.triggerAttackRelease('G3', '32n');
+        else if (type === 'insert') polySynth?.triggerAttackRelease(['C4', 'G4'], '32n');
+        else if (type === 'snap') {
+          foleySynth?.triggerAttackRelease('C2', '16n');
+          polySynth?.triggerAttackRelease(['E5', 'B5'], '32n');
+        } else if (type === 'eject') {
+          foleySynth?.triggerAttackRelease('F2', '16n');
+          polySynth?.triggerAttackRelease(['G4', 'C4'], '32n');
+        } else {
+          polySynth?.triggerAttackRelease('E4', '64n');
+        }
+      } catch (e) {}
+    }
+
+    function toggleMusicPlayback(forceStop = false) {
+      if (forceStop || AppState.isPlayingAudio || AppState.insertedIndex === -1 || !AppState.soundEnabled) {
+        if (synthLoop) {
+          synthLoop.stop();
+          synthLoop.dispose();
+          synthLoop = null;
+          if(forceStop) Tone.Transport.stop(); else Tone.Transport.pause();
+        }
+        AppState.isPlayingAudio = false;
+        updateEditorialUI();
+        return;
+      }
+
+      const track = CARTRIDGE_REGISTRY[AppState.insertedIndex];
+      const requestedIndex = AppState.insertedIndex;
+      initAudio().then(() => {
+        if (!audioInitialized || !AppState.soundEnabled || AppState.phase !== 'active' || AppState.insertedIndex !== requestedIndex) return;
+        AppState.isPlayingAudio = true;
+        if (synthLoop) {
+          synthLoop.stop();
+          synthLoop.dispose();
+        }
+        synthLoop = new Tone.Part((time, value) => {
+          if (AppState.soundEnabled && polySynth) {
+            polySynth.triggerAttackRelease(value.note, value.dur, time);
+          }
+        }, track.melody);
+        synthLoop.loop = true;
+        synthLoop.loopEnd = '2m';
+        Tone.Transport.bpm.value = track.bpm;
+        Tone.Transport.start();
+        synthLoop.start(0);
+        updateEditorialUI();
+      });
+    }
+
+    // ============================================================================
+    // 4. THREE.JS SCENE, CAMERA & WARM GOLDEN-HOUR LIGHTING
+    // ============================================================================
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+
+    const camera = new THREE.PerspectiveCamera(32, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const cameraTargetBase = new THREE.Vector3();
+    const cameraPosBase = new THREE.Vector3();
+
+    // Responsive framing: shifts player right of editorial text on desktop, centered on mobile
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let worldHeight = 112;
+    let worldWidth = 168;
+    function computeResponsiveFraming() {
+      const w = window.innerWidth, h = window.innerHeight;
+      const mobile = w <= 900 && w < h;
+      worldWidth = mobile && h>=600 ? (w<500?68:96) : mobile && w<500 ? 74 : Math.max(200,112*w/h);
+      worldHeight = worldWidth * h / w;
+      const z = worldHeight / (2 * Math.tan(THREE.MathUtils.degToRad(16)));
+      cameraPosBase.set(0, 4, z);
+      cameraTargetBase.set(0, 0, 0);
+    }
+    computeResponsiveFraming();
+    camera.position.copy(cameraPosBase);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.18;
+    container.appendChild(renderer.domElement);
+
+    const pmremGenerator = new THREE.PMREMGenerator(renderer);
+    scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.07;
+    controls.target.copy(cameraTargetBase);
+    controls.enablePan = false;
+    controls.enableZoom = false;
+    controls.enableRotate = false; // Locked flat-UI composition with subtle pointer parallax
+
+    // Pointer parallax state for flat-UI 3D feel
+    const pointerParallax = new THREE.Vector2(0, 0);
+    const targetParallax = new THREE.Vector2(0, 0);
+
+    // Warm Golden-Hour Key Light (casts realistic desk shadows)
+    const sunKeyLight = new THREE.DirectionalLight(0xffdfba, 3.1);
+    sunKeyLight.position.set(58, 72, 62);
+    sunKeyLight.castShadow = true;
+    sunKeyLight.shadow.mapSize.set(1024, 1024);
+    sunKeyLight.shadow.camera.near = 15;
+    sunKeyLight.shadow.camera.far = 240;
+    const sd = 95;
+    sunKeyLight.shadow.camera.left = -sd;
+    sunKeyLight.shadow.camera.right = sd;
+    sunKeyLight.shadow.camera.top = sd;
+    sunKeyLight.shadow.camera.bottom = -sd;
+    sunKeyLight.shadow.bias = -0.0008;
+
+
+    // Cool Studio Fill Light (left side)
+    const studioFillLight = new THREE.DirectionalLight(0xcbdcf7, 1.15);
+    studioFillLight.position.set(-65, 28, 35);
+
+
+    // Warm Desk Bounce & Rim Light
+    const warmRimLight = new THREE.DirectionalLight(0xffae70, 1.45);
+    warmRimLight.position.set(15, -45, 50);
+
+
+    // A soft contact shadow integrates the object with the photographed desk.
+    // A large receiving plane produced a visible polygon across portrait scenery.
+    const shadowCanvas=document.createElement('canvas');shadowCanvas.width=128;shadowCanvas.height=128;
+    const shadowCtx=shadowCanvas.getContext('2d');
+    const shadowGradient=shadowCtx.createRadialGradient(64,64,0,64,64,64);
+    shadowGradient.addColorStop(0,'rgba(18,10,5,.8)');shadowGradient.addColorStop(1,'rgba(18,10,5,0)');
+    shadowCtx.fillStyle=shadowGradient;shadowCtx.fillRect(0,0,128,128);
+    const deskShadowCatcher=new THREE.Mesh(new THREE.PlaneGeometry(62,8),new THREE.MeshBasicMaterial({
+      map:new THREE.CanvasTexture(shadowCanvas),transparent:true,opacity:.45,depthWrite:false,toneMapped:false
+    }));
+
+    // ============================================================================
+    // 5. PROCEDURAL TEXTURES & SHARED MULTI-MODE AMOLED SCREEN
+    // ============================================================================
+    function createNoiseBumpTexture() {
+      const c = document.createElement('canvas');
+      c.width = 256; c.height = 256;
+      const ctx = c.getContext('2d');
+      const imgData = ctx.createImageData(256, 256);
+      for (let i = 0; i < imgData.data.length; i += 4) {
+        const v = 118 + Math.floor(Math.random() * 20);
+        imgData.data[i] = v;
+        imgData.data[i + 1] = v;
+        imgData.data[i + 2] = v;
+        imgData.data[i + 3] = 255;
+      }
+      ctx.putImageData(imgData, 0, 0);
+      const tex = new THREE.CanvasTexture(c);
+      tex.wrapS = THREE.RepeatWrapping;
+      tex.wrapT = THREE.RepeatWrapping;
+      tex.repeat.set(6, 6);
+      return tex;
+    }
+    const matteBumpTex = createNoiseBumpTexture();
+
+    function drawRoundedRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    }
+
+    // Category artwork & vector glyph renderer shared by both Cartridges and AMOLED Screen
+    function drawCategoryArtwork(ctx, track, x, y, w, h, isCartridge = false) {
+      ctx.save();
+      const skyGrad = ctx.createLinearGradient(0, y, 0, y + h);
+      skyGrad.addColorStop(0, track.skyColors[0]);
+      skyGrad.addColorStop(0.38, track.skyColors[1]);
+      skyGrad.addColorStop(0.75, track.skyColors[2]);
+      skyGrad.addColorStop(1, track.skyColors[3]);
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(x, y, w, h);
+
+      const cx = x + w * 0.54;
+      const cy = y + h * 0.42;
+      const sunR = Math.min(w, h) * 0.25;
+
+      // Sun / Moon orb
+      const sunGrad = ctx.createLinearGradient(0, cy - sunR, 0, cy + sunR);
+      sunGrad.addColorStop(0, track.sunColors[0]);
+      sunGrad.addColorStop(0.6, track.sunColors[1]);
+      sunGrad.addColorStop(1, track.sunColors[2]);
+      ctx.fillStyle = sunGrad;
+      ctx.beginPath();
+      ctx.arc(cx, cy, sunR, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Category-specific scenic illustration matching the reference image
+      if (track.iconType === 'palm') {
+        // 001 Nostalgia: Sunset city skyline + two palm silhouettes
+        ctx.fillStyle = '#180c24';
+        const bars = [0.08, 0.15, 0.24, 0.31, 0.39, 0.46, 0.53, 0.61, 0.68, 0.76, 0.84, 0.91];
+        bars.forEach((bx, idx) => {
+          const bh = (0.22 + ((idx * 37) % 28) / 100) * h;
+          ctx.fillRect(x + bx * w, y + h - bh, w * 0.055, bh);
+        });
+        // Palms
+        const drawPalm = (px, py, sc, flip) => {
+          ctx.save();
+          ctx.translate(px, py);
+          ctx.scale(sc * flip, sc);
+          ctx.strokeStyle = '#12081c';
+          ctx.lineWidth = 8;
+          ctx.lineCap = 'round';
+          ctx.beginPath();
+          ctx.moveTo(0, 140);
+          ctx.quadraticCurveTo(14, 70, 0, 0);
+          ctx.stroke();
+          [-2.5, -2.0, -1.5, -0.9, -0.3, 0.3].forEach((a) => {
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.quadraticCurveTo(Math.cos(a) * 35, Math.sin(a) * 30 - 10, Math.cos(a) * 65, Math.sin(a) * 52 + 18);
+            ctx.stroke();
+          });
+          ctx.restore();
+        };
+        const sc = w / 640;
+        drawPalm(x + w * 0.18, y + h * 0.42, sc, 1);
+        drawPalm(x + w * 0.84, y + h * 0.36, sc * 1.1, -1);
+      } else if (track.iconType === 'tree') {
+        // 002 Gaming: Pine mountains & forest valley
+        ctx.fillStyle = '#133326';
+        ctx.beginPath();
+        ctx.moveTo(x, y + h);
+        ctx.lineTo(x + w * 0.28, y + h * 0.36);
+        ctx.lineTo(x + w * 0.55, y + h * 0.72);
+        ctx.lineTo(x + w * 0.78, y + h * 0.28);
+        ctx.lineTo(x + w, y + h * 0.65);
+        ctx.lineTo(x + w, y + h);
+        ctx.fill();
+        ctx.fillStyle = '#091c14';
+        for (let i = 0; i < 11; i++) {
+          const tx = x + (i / 10) * w;
+          const th = h * (0.24 + (i % 3) * 0.08);
+          ctx.beginPath();
+          ctx.moveTo(tx, y + h - th);
+          ctx.lineTo(tx - w * 0.06, y + h);
+          ctx.lineTo(tx + w * 0.06, y + h);
+          ctx.fill();
+        }
+      } else if (track.iconType === 'monitor') {
+        // 003 Technology: Neon synthwave desk & dual monitors
+        ctx.fillStyle = '#190826';
+        ctx.fillRect(x, y + h * 0.68, w, h * 0.32);
+        ctx.strokeStyle = '#f472b6';
+        ctx.lineWidth = Math.max(2, w * 0.008);
+        drawRoundedRect(ctx, x + w * 0.32, y + h * 0.34, w * 0.38, h * 0.28, 6);
+        ctx.stroke();
+        ctx.fillStyle = '#2e1042';
+        ctx.fill();
+        ctx.fillStyle = '#e879f9';
+        ctx.fillRect(x + w * 0.36, y + h * 0.40, w * 0.22, h * 0.03);
+        ctx.fillRect(x + w * 0.36, y + h * 0.46, w * 0.28, h * 0.03);
+      } else if (track.iconType === 'sprout') {
+        // 004 Horticulture: Sunlit glass conservatory & lush botanical leaves
+        ctx.strokeStyle = 'rgba(255,255,255,0.28)';
+        ctx.lineWidth = 3;
+        for (let i = 1; i < 5; i++) {
+          ctx.beginPath();
+          ctx.moveTo(x + (w * i) / 5, y);
+          ctx.lineTo(x + (w * i) / 5, y + h);
+          ctx.stroke();
+        }
+        ctx.fillStyle = '#123524';
+        for (let i = 0; i < 9; i++) {
+          ctx.beginPath();
+          ctx.arc(x + (i / 8) * w, y + h * 0.78, w * 0.12, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      } else if (track.iconType === 'moon') {
+        // 005 Creative: Starry indigo night & crescent moon
+        ctx.fillStyle = '#040814';
+        ctx.beginPath();
+        ctx.arc(cx - sunR * 0.35, cy - sunR * 0.15, sunR * 0.85, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#ffffff';
+        for (let i = 0; i < 24; i++) {
+          const sx = x + ((i * 73) % 96) * 0.01 * w;
+          const sy = y + ((i * 41) % 65) * 0.01 * h;
+          ctx.fillRect(sx, sy, 3, 3);
+        }
+      } else if (track.iconType === 'paw') {
+        // 006 Dogs: Adorable tan & white Chihuahua portrait
+        const dx = x + w * 0.5;
+        const dy = y + h * 0.56;
+        const r = Math.min(w, h) * 0.26;
+        // Ears
+        ctx.fillStyle = '#8c5832';
+        ctx.beginPath();
+        ctx.moveTo(dx - r * 0.65, dy - r * 0.2);
+        ctx.lineTo(dx - r * 1.45, dy - r * 1.25);
+        ctx.lineTo(dx - r * 0.15, dy - r * 0.85);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(dx + r * 0.65, dy - r * 0.2);
+        ctx.lineTo(dx + r * 1.45, dy - r * 1.25);
+        ctx.lineTo(dx + r * 0.15, dy - r * 0.85);
+        ctx.fill();
+        // Inner pink ears
+        ctx.fillStyle = '#e5989b';
+        ctx.beginPath();
+        ctx.moveTo(dx - r * 0.62, dy - r * 0.32);
+        ctx.lineTo(dx - r * 1.2, dy - r * 1.05);
+        ctx.lineTo(dx - r * 0.28, dy - r * 0.78);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(dx + r * 0.62, dy - r * 0.32);
+        ctx.lineTo(dx + r * 1.2, dy - r * 1.05);
+        ctx.lineTo(dx + r * 0.28, dy - r * 0.78);
+        ctx.fill();
+        // Head
+        ctx.fillStyle = '#b57c4e';
+        ctx.beginPath();
+        ctx.arc(dx, dy, r, 0, Math.PI * 2);
+        ctx.fill();
+        // White muzzle blaze
+        ctx.fillStyle = '#f8f4ef';
+        ctx.beginPath();
+        ctx.ellipse(dx, dy + r * 0.28, r * 0.55, r * 0.48, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // Big glossy eyes
+        ctx.fillStyle = '#16110d';
+        ctx.beginPath();
+        ctx.arc(dx - r * 0.42, dy - r * 0.08, r * 0.2, 0, Math.PI * 2);
+        ctx.arc(dx + r * 0.42, dy - r * 0.08, r * 0.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(dx - r * 0.47, dy - r * 0.14, r * 0.06, 0, Math.PI * 2);
+        ctx.arc(dx + r * 0.37, dy - r * 0.14, r * 0.06, 0, Math.PI * 2);
+        ctx.fill();
+        // Nose
+        ctx.fillStyle = '#241811';
+        ctx.beginPath();
+        ctx.ellipse(dx, dy + r * 0.18, r * 0.16, r * 0.11, 0, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (track.iconType === 'pagoda') {
+        // 007 Anime: Mount Fuji silhouette & Japanese Pagoda tiers
+        ctx.fillStyle = '#2d1644';
+        ctx.beginPath();
+        ctx.moveTo(x + w * 0.05, y + h);
+        ctx.lineTo(x + w * 0.32, y + h * 0.42);
+        ctx.lineTo(x + w * 0.42, y + h * 0.42);
+        ctx.lineTo(x + w * 0.68, y + h);
+        ctx.fill();
+        // Pagoda silhouette on right
+        ctx.fillStyle = '#150924';
+        for (let t = 0; t < 3; t++) {
+          const py = y + h * (0.42 + t * 0.16);
+          const pw = w * (0.22 + t * 0.05);
+          ctx.fillRect(x + w * 0.76 - pw / 2, py, pw, h * 0.05);
+          ctx.fillRect(x + w * 0.76 - pw * 0.35, py + h * 0.05, pw * 0.7, h * 0.11);
+        }
+      } else if (track.iconType === 'mountain') {
+        // 008 Life: Crisp snow-capped alpine peaks
+        ctx.fillStyle = '#1e293b';
+        ctx.beginPath();
+        ctx.moveTo(x + w * 0.08, y + h);
+        ctx.lineTo(x + w * 0.46, y + h * 0.22);
+        ctx.lineTo(x + w * 0.88, y + h);
+        ctx.fill();
+        ctx.fillStyle = '#f8fafc';
+        ctx.beginPath();
+        ctx.moveTo(x + w * 0.46, y + h * 0.22);
+        ctx.lineTo(x + w * 0.34, y + h * 0.48);
+        ctx.lineTo(x + w * 0.43, y + h * 0.44);
+        ctx.lineTo(x + w * 0.50, y + h * 0.52);
+        ctx.lineTo(x + w * 0.58, y + h * 0.46);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // Small category vector badge on bottom-left of each cartridge
+    function drawCategoryBadgeIcon(ctx, iconType, x, y, color) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = 4;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      if (iconType === 'palm') {
+        ctx.beginPath();
+        ctx.moveTo(0, 18); ctx.lineTo(0, -8);
+        ctx.moveTo(-14, 18); ctx.lineTo(14, 18);
+        ctx.moveTo(0, -8); ctx.lineTo(-14, -2);
+        ctx.moveTo(0, -8); ctx.lineTo(14, -2);
+        ctx.moveTo(0, -8); ctx.lineTo(-10, -14);
+        ctx.moveTo(0, -8); ctx.lineTo(10, -14);
+        ctx.stroke();
+      } else if (iconType === 'tree') {
+        ctx.beginPath();
+        ctx.moveTo(0, -16); ctx.lineTo(-14, 6); ctx.lineTo(14, 6); ctx.closePath();
+        ctx.fill();
+        ctx.fillRect(-3, 6, 6, 12);
+      } else if (iconType === 'monitor') {
+        drawRoundedRect(ctx, -16, -14, 32, 22, 4);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(-8, 16); ctx.lineTo(8, 16);
+        ctx.moveTo(0, 8); ctx.lineTo(0, 16);
+        ctx.stroke();
+      } else if (iconType === 'sprout') {
+        ctx.beginPath();
+        ctx.moveTo(0, 16); ctx.lineTo(0, -4);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.ellipse(-8, -4, 8, 5, -0.4, 0, Math.PI * 2);
+        ctx.ellipse(8, -6, 8, 5, 0.4, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (iconType === 'moon') {
+        ctx.beginPath();
+        ctx.arc(0, 0, 13, 0.4, Math.PI * 1.65);
+        ctx.arc(6, -3, 10, Math.PI * 1.65, 0.4, true);
+        ctx.fill();
+      } else if (iconType === 'paw') {
+        ctx.beginPath();
+        ctx.ellipse(0, 6, 9, 7, 0, 0, Math.PI * 2);
+        ctx.fill();
+        [[-10, -6], [-3, -11], [4, -11], [10, -6]].forEach(([px, py]) => {
+          ctx.beginPath();
+          ctx.arc(px, py, 3.5, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      } else if (iconType === 'pagoda') {
+        ctx.fillRect(-12, 6, 24, 5);
+        ctx.fillRect(-9, -3, 18, 5);
+        ctx.fillRect(-6, -12, 12, 5);
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(-16, 12); ctx.lineTo(-4, -10); ctx.lineTo(6, 12);
+        ctx.moveTo(0, 12); ctx.lineTo(8, -4); ctx.lineTo(16, 12);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // Dynamic AMOLED Screen Canvas & Texture
+    const amoledCanvas = document.createElement('canvas');
+    amoledCanvas.width = 1024;
+    amoledCanvas.height = 1024;
+    const amoledCtx = amoledCanvas.getContext('2d');
+    const amoledTexture = new THREE.CanvasTexture(amoledCanvas);
+    amoledTexture.colorSpace = THREE.SRGBColorSpace;
+    amoledTexture.anisotropy = 8;
+
+    function wrapText(ctx,text,x,y,width,lineHeight) {
+      let line='';
+      for (const word of text.split(' ')) {
+        if (ctx.measureText(line+word).width>width && line) { ctx.fillText(line.trim(),x,y); line=''; y+=lineHeight; }
+        line+=word+' ';
+      }
+      ctx.fillText(line.trim(),x,y);
+    }
+    function updateAmoledScreen() {
+      const ctx = amoledCtx;
+      const activeIdx = AppState.insertedIndex >= 0 ? AppState.insertedIndex : AppState.selectedIndex;
+      const track = CARTRIDGE_REGISTRY[activeIdx];
+      const isInserted = AppState.insertedIndex !== -1;
+      const isPlaying = AppState.isPlayingAudio;
+      const progressRatio = AppState.playbackProgress;
+
+      ctx.clearRect(0, 0, 1024, 1024);
+
+      // Pure AMOLED Black Background
+      ctx.fillStyle = '#050507';
+      ctx.fillRect(0, 0, 1024, 1024);
+
+      // --- TOP STATUS BAR (Matches Reference) ---
+      ctx.save();
+      ctx.strokeStyle = '#ffffff';
+      ctx.fillStyle = '#ffffff';
+      ctx.lineWidth = 8;
+      ctx.lineCap = 'round';
+      const ix = 76, iy = 84;
+      ctx.beginPath();
+      ctx.moveTo(ix, iy); ctx.lineTo(ix + 26, iy + 26);
+      ctx.moveTo(ix + 26, iy); ctx.lineTo(ix, iy + 26);
+      ctx.stroke();
+      [[ix, iy], [ix + 26, iy], [ix, iy + 26], [ix + 26, iy + 26]].forEach(([dx, dy]) => {
+        ctx.beginPath();
+        ctx.arc(dx, dy, 5.5, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      ctx.font = '700 50px Inter, -apple-system, sans-serif';
+      ctx.fillText('benclips', 120, 114);
+      ctx.font = '600 17px Inter, sans-serif';
+      ctx.fillText('TM', 326, 84);
+
+      // Glowing indicator dot next to benclips
+      ctx.fillStyle = isInserted ? '#ff5500' : track.themeColor;
+      ctx.beginPath();
+      ctx.arc(340, 107, 9, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Right: Time "10:24" & Battery icon
+      ctx.fillStyle = '#f4f6fa';
+      ctx.font = '500 42px Inter, sans-serif';
+      ctx.fillText('10:24', 690, 113);
+
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 4.5;
+      drawRoundedRect(ctx, 842, 76, 86, 42, 9);
+      ctx.stroke();
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(932, 88, 7, 18);
+      drawRoundedRect(ctx, 850, 84, 62, 26, 5);
+      ctx.fill();
+      ctx.restore();
+
+      // --- BOOTING STATE OVERLAY ---
+      if (AppState.phase === 'booting') {
+        ctx.save();
+        ctx.fillStyle = track.themeColor;
+        ctx.font = '600 32px "JetBrains Mono", monospace';
+        ctx.fillText(`MOUNTING CARTRIDGE #${track.id}...`, 110, 440);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '700 64px Inter, sans-serif';
+        ctx.fillText(track.category.toUpperCase(), 110, 525);
+        drawRoundedRect(ctx, 110, 575, 804, 18, 9);
+        ctx.strokeStyle = '#333';
+        ctx.stroke();
+        drawRoundedRect(ctx, 110, 575, 804 * Math.min(1, AppState.bootTimer * 3.2), 18, 9);
+        ctx.fillStyle = track.themeColor;
+        ctx.fill();
+        ctx.restore();
+        amoledTexture.needsUpdate = true;
+        return;
+      }
+
+      // --- ROUNDED ALBUM ARTWORK / ARCHIVE CARD ---
+      ctx.save();
+      drawRoundedRect(ctx, 68, 150, 888, 455, 42);
+      ctx.clip();
+
+      const liveExperience=EXPERIENCES[track.experienceId];
+      const frame=liveExperience?.action?.frames?.[AppState.interactionCount % liveExperience.action.frames.length];
+      drawCategoryArtwork(ctx,frame && isInserted ? {...track,skyColors:frame} : track,68,150,888,455,false);
+      if (isInserted && track.experienceId==='horticulture') {
+        const growth=AppState.interactionCount;
+        ctx.save(); ctx.strokeStyle='#163e28';ctx.lineWidth=10;ctx.lineCap='round';
+        ctx.beginPath();ctx.moveTo(512,590);ctx.lineTo(512,565-growth*48);ctx.stroke();
+        for(let i=0;i<growth;i++) {
+          ctx.fillStyle=i%2?'#83cba1':'#2f8051';ctx.beginPath();
+          ctx.ellipse(512+(i%2?28:-28),550-i*42,40,16,i%2?-.5:.5,0,Math.PI*2);ctx.fill();
+        }
+        ctx.restore();
+      }
+
+      // If in 'archive' story view mode (toggled by tapping the 3 dots on screen), show curated archive notes
+      if (AppState.screenViewMode === 'archive') {
+        const experience=EXPERIENCES[track.experienceId];
+        const entry=experience?.entries[AppState.screenPage % experience.entries.length];
+        ctx.fillStyle='rgba(8,8,12,.88)'; ctx.fillRect(68,150,888,455);
+        ctx.fillStyle=track.themeColor; ctx.font='500 25px "JetBrains Mono",monospace';
+        ctx.fillText(`${track.category.toUpperCase()} / ${experience?.mode.toUpperCase() || 'ARCHIVE'}`,110,216);
+        ctx.fillStyle='#fff'; ctx.font='600 42px Inter,sans-serif';
+        ctx.fillText(entry?.title || track.storyNotes[0],110,285);
+        ctx.font='400 31px Inter,sans-serif'; ctx.fillStyle='#e4dcd3';
+        wrapText(ctx,entry?.text || track.storyNotes.join('. '),110,345,790,45);
+        if(experience?.action) {
+          ctx.fillStyle=track.themeColor; ctx.font='500 27px Inter,sans-serif';
+          wrapText(ctx,interactionFeedback(experience),110,540,780,34);
+        }
+      } else {
+        const botVig = ctx.createLinearGradient(0, 465, 0, 605);
+        botVig.addColorStop(0, 'rgba(5, 5, 7, 0)');
+        botVig.addColorStop(1, 'rgba(5, 5, 7, 0.9)');
+        ctx.fillStyle = botVig;
+        ctx.fillRect(68, 465, 888, 140);
+      }
+      ctx.restore();
+
+      // --- TRACK TITLE & ARTIST ---
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '700 54px Inter, -apple-system, sans-serif';
+      ctx.fillText(track.category, 84, 650);
+
+      ctx.fillStyle = '#d5dbe6';
+      ctx.font = '500 38px Inter, -apple-system, sans-serif';
+      const statusSuffix = isInserted ? '' : ' (Ready)';
+      ctx.font='500 32px Inter,sans-serif';
+      ctx.fillText(`${EXPERIENCES[track.experienceId]?.title || track.title}${statusSuffix}`, 84, 706);
+
+      // 3-Dots Menu Icon (toggles Archive Notes view)
+      ctx.fillStyle = AppState.screenViewMode === 'archive' ? track.themeColor : '#ffffff';
+      [632, 660, 688].forEach((dy) => {
+        ctx.beginPath();
+        ctx.arc(918, dy, 6.5, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // --- PROGRESS SCRUBBER BAR ---
+      const barX = 84, barY = 755, barW = 856, barH = 20;
+      ctx.fillStyle = '#2d3039';
+      drawRoundedRect(ctx, barX, barY, barW, barH, 10);
+      ctx.fill();
+
+      const activeW = Math.max(24, Math.min(barW, barW * progressRatio));
+      const progGrad = ctx.createLinearGradient(barX, 0, barX + activeW, 0);
+      progGrad.addColorStop(0, track.themeColor);
+      progGrad.addColorStop(1, '#ffb3c6');
+      ctx.fillStyle = progGrad;
+      drawRoundedRect(ctx, barX, barY, activeW, barH, 10);
+      ctx.fill();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(barX + activeW, barY + barH / 2, 15, 0, Math.PI * 2);
+      ctx.fill();
+
+      const totalSecs = track.totalSecs;
+      const curSecs = Math.floor(totalSecs * progressRatio);
+      const mins = Math.floor(curSecs / 60);
+      const secs = String(curSecs % 60).padStart(2, '0');
+      ctx.fillStyle = '#dcdfe6';
+      ctx.font = '500 32px Inter, sans-serif';
+      ctx.fillText(`${mins}:${secs}`, 84, 820);
+      ctx.fillText(track.duration, 862, 820);
+
+      // --- MEDIA PLAYBACK CONTROLS ---
+      ctx.fillStyle = '#ffffff';
+      // Previous Track
+      ctx.fillRect(226, 878, 10, 56);
+      ctx.beginPath();
+      ctx.moveTo(238, 906);
+      ctx.lineTo(284, 878);
+      ctx.lineTo(284, 934);
+      ctx.closePath();
+      ctx.fill();
+
+      // Center Play / Pause Ring
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 7;
+      ctx.beginPath();
+      ctx.arc(512, 906, 66, 0, Math.PI * 2);
+      ctx.stroke();
+
+      if (isPlaying) {
+        drawRoundedRect(ctx, 488, 876, 15, 60, 4);
+        ctx.fill();
+        drawRoundedRect(ctx, 521, 876, 15, 60, 4);
+        ctx.fill();
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(494, 874);
+        ctx.lineTo(494, 938);
+        ctx.lineTo(546, 906);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // Next Track
+      ctx.beginPath();
+      ctx.moveTo(740, 878);
+      ctx.lineTo(786, 906);
+      ctx.lineTo(740, 934);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillRect(788, 878, 10, 56);
+
+      amoledTexture.needsUpdate = true;
+    }
+
+    // Cartridge Front Artwork Sticker Generator (Matches Reference Labels 001–008)
+    function createCartridgeFrontTexture(track) {
+      const c = document.createElement('canvas');
+      c.width = 512; c.height = 512;
+      const ctx = c.getContext('2d');
+
+      // Scenic category artwork in upper 76%
+      drawCategoryArtwork(ctx, track, 0, 0, 512, 390, true);
+
+      // Top header bar: "benclips™" on left, "001" index on right
+      ctx.fillStyle = 'rgba(255,255,255,0.92)';
+      ctx.font = '700 28px Inter, sans-serif';
+      ctx.fillText('benclips', 30, 48);
+      ctx.font = '600 12px Inter, sans-serif';
+      ctx.fillText('TM', 146, 32);
+
+      ctx.font = '600 24px "JetBrains Mono", monospace';
+      ctx.fillText(track.id, 428, 48);
+
+      // Bottom dark band with category icon on left and ID on right
+      ctx.fillStyle = '#0d0e12';
+      ctx.fillRect(0, 386, 512, 126);
+
+      drawCategoryBadgeIcon(ctx, track.iconType, 58, 448, track.themeColor);
+
+      ctx.fillStyle = '#e5e7eb';
+      ctx.font = '600 28px "JetBrains Mono", monospace';
+      ctx.fillText(track.id, 420, 460);
+
+      const tex = new THREE.CanvasTexture(c);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      tex.anisotropy = 4;
+      return tex;
+    }
+
+    function createBackLabelTexture() {
+      const c = document.createElement('canvas');
+      c.width = 512; c.height = 512;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#111111';
+      ctx.fillRect(0, 0, 512, 512);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '700 42px Inter, sans-serif';
+      ctx.fillText('benclips™', 44, 150);
+
+      ctx.fillStyle = '#bfc6d0';
+      ctx.font = '400 28px Inter, sans-serif';
+      ctx.fillText('tiny songs', 44, 235);
+      ctx.fillText('big memories', 44, 275);
+      ctx.fillText('1999 → forever', 44, 315);
+
+      ctx.font = '700 36px Inter, sans-serif';
+      ctx.fillText('CE', 355, 420);
+
+      const tex = new THREE.CanvasTexture(c);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      return tex;
+    }
+
+    // ============================================================================
+    // 6. PHYSICAL MATERIALS & FLAT-MATED INJECTION-MOLDED SHELL GEOMETRY
+    // ============================================================================
+    const clearShellMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0xffffff,
+      roughness: 0.04,
+      metalness: 0.0,
+      transmission: 0.82,
+      opacity: 0.48,
+      depthWrite: false,
+      transparent: true,
+      ior: 1.55,
+      thickness: 1.8,
+      iridescence: 0.48,
+      iridescenceIOR: 1.3,
+      iridescenceThicknessRange: [180, 460],
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.02,
+      attenuationColor: new THREE.Color(0xfffcf5),
+      attenuationDistance: 45,
+      side: THREE.FrontSide,
+      envMapIntensity: 1.25
+    });
+
+    const matteBlackMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0x111111,
+      roughness: 0.45,
+      metalness: 0.0,
+      clearcoat: 0.1,
+      clearcoatRoughness: 0.5,
+      specularColor: new THREE.Color(0x222222),
+      bumpMap: matteBumpTex,
+      bumpScale: 0.04
+    });
+
+    const orangeSliderMaterial = new THREE.MeshStandardMaterial({
+      color: 0xff5500,
+      roughness: 0.32,
+      metalness: 0.0
+    });
+
+    const pcbGreenMat = new THREE.MeshStandardMaterial({
+      color: 0x174826,
+      roughness: 0.38,
+      metalness: 0.22
+    });
+
+    const brushedSteelMat = new THREE.MeshStandardMaterial({
+      color: 0xd6dbe2,
+      roughness: 0.22,
+      metalness: 0.92
+    });
+
+    const brushedTrayMat = new THREE.MeshStandardMaterial({
+      color: 0x8d8174,
+      roughness: 0.4,
+      metalness: 0.72
+    });
+
+    const goldContactMat = new THREE.MeshStandardMaterial({
+      color: 0xebb93e,
+      roughness: 0.22,
+      metalness: 0.95
+    });
+
+    function createRoundedRectShape(width, height, radius) {
+      const shape = new THREE.Shape();
+      const x = -width / 2;
+      const y = -height / 2;
+      shape.moveTo(x + radius, y);
+      shape.lineTo(x + width - radius, y);
+      shape.quadraticCurveTo(x + width, y, x + width, y + radius);
+      shape.lineTo(x + width, y + height - radius);
+      shape.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+      shape.lineTo(x + radius, y + height);
+      shape.quadraticCurveTo(x, y + height, x, y + height - radius);
+      shape.lineTo(x, y + radius);
+      shape.quadraticCurveTo(x, y, x + radius, y);
+      return shape;
+    }
+
+    // Preserved flat-mated injection-molded shell half builder (100% flat seam at Z = 0)
+    function createMoldedShellHalf(w, h, depth, bevelSize, cornerRadius, includeInternalRibs = true) {
+      const halfGroup = new THREE.Group();
+      // A hollow molded rim: a solid transmitting box washed out the artwork
+      // because WebGL cannot refract the separate CSS studio photograph.
+      const rimShape=createRoundedRectShape(w,h,cornerRadius);
+      rimShape.holes.push(createRoundedRectShape(w-1.1,h-1.1,Math.max(.5,cornerRadius-.55)));
+      const fullGeo=new THREE.ExtrudeGeometry(rimShape,{
+        depth:depth-.35,bevelEnabled:true,bevelThickness:.32,bevelSize:.28,bevelSegments:4,curveSegments:12
+      });
+      const bodyMesh = new THREE.Mesh(fullGeo, clearShellMaterial);
+      halfGroup.add(bodyMesh);
+      const seamShape = createRoundedRectShape(w-.7,h-.7,cornerRadius);
+      const seamPoints=seamShape.getPoints(48),seamVertices=[];
+      for (const z of [.15,depth-.45]) {
+        for(let i=0;i<seamPoints.length-1;i++) seamVertices.push(seamPoints[i].x,seamPoints[i].y,z,seamPoints[i+1].x,seamPoints[i+1].y,z);
+      }
+      const seamGeometry=new THREE.BufferGeometry();
+      seamGeometry.setAttribute('position',new THREE.Float32BufferAttribute(seamVertices,3));
+      halfGroup.add(new THREE.LineSegments(seamGeometry,new THREE.LineBasicMaterial({color:0xffe3b8,transparent:true,opacity:.3})));
+
+      // Fine spectral edge glints supplement physical thin-film reflections.
+      const glintColors=[],glintVertices=[];
+      const spectrum=[new THREE.Color('#ffe2a4'),new THREE.Color('#ecf6ff'),new THREE.Color('#a6caff'),new THREE.Color('#e9b5d7')];
+      for(let i=0;i<seamPoints.length-1;i++) {
+        const point=seamPoints[i],next=seamPoints[i+1];
+        const edgeColor=spectrum[Math.floor(i/seamPoints.length*4)%4];
+        for(const v of [point,next]) { glintVertices.push(v.x,v.y,depth+.02);glintColors.push(edgeColor.r,edgeColor.g,edgeColor.b); }
+      }
+      const glintGeometry=new THREE.BufferGeometry();
+      glintGeometry.setAttribute('position',new THREE.Float32BufferAttribute(glintVertices,3));
+      glintGeometry.setAttribute('color',new THREE.Float32BufferAttribute(glintColors,3));
+      halfGroup.add(new THREE.LineSegments(glintGeometry,new THREE.LineBasicMaterial({vertexColors:true,transparent:true,opacity:.65,blending:THREE.AdditiveBlending,depthWrite:false,toneMapped:false})));
+
+      if (includeInternalRibs) {
+        [-8, 8].forEach((rx) => {
+          const topRib = new THREE.Mesh(new THREE.BoxGeometry(1.0, 2.6, 2.2), clearShellMaterial);
+          topRib.position.set(rx, 18.6, 2.2);
+          halfGroup.add(topRib);
+
+          const botRib = new THREE.Mesh(new THREE.BoxGeometry(1.0, 2.6, 2.2), clearShellMaterial);
+          botRib.position.set(rx, -18.6, 2.2);
+          halfGroup.add(botRib);
+        });
+
+        [-6, 6].forEach((ry) => {
+          const leftRib = new THREE.Mesh(new THREE.BoxGeometry(2.6, 1.0, 2.2), clearShellMaterial);
+          leftRib.position.set(-18.6, ry, 2.2);
+          halfGroup.add(leftRib);
+        });
+      }
+
+      return halfGroup;
+    }
+
+    function setLayerProps(group, order, castShadow = true, receiveShadow = true) {
+      group.traverse((child) => {
+        if (child.isMesh) {
+          child.renderOrder = order;
+          child.castShadow = castShadow;
+          child.receiveShadow = receiveShadow;
+        }
+      });
+    }
+
+    // ============================================================================
+    // 7. BUILD 3D PLAYER ASSEMBLY (Right-of-Center Editorial Composition)
+    // ============================================================================
+
+
+
+    const playerGroup = new THREE.Group();
+    const PLAYER_BASE_POS = new THREE.Vector3(7, 8.5, 0);
+    playerGroup.position.copy(PLAYER_BASE_POS);
+
+
+    const parts = {
+      frontShell: new THREE.Group(),
+      controlWheel: new THREE.Group(),
+      faceplate: new THREE.Group(),
+      pcb: new THREE.Group(),
+      cartridgeSlot: new THREE.Group(),
+      sliderButton: new THREE.Group(),
+      backShell: new THREE.Group(),
+      screws: new THREE.Group(),
+      keyring: new THREE.Group()
+    };
+    Object.values(parts).forEach((g) => playerGroup.add(g));
+
+    // 1. Seamless Flat-Mated Clear Polycarbonate Halves
+    const frontHalf = createMoldedShellHalf(42, 42, 6.2, 1.8, 4.2, true);
+    parts.frontShell.add(frontHalf);
+
+    const backHalf = createMoldedShellHalf(42, 42, 6.2, 1.8, 4.2, true);
+    backHalf.scale.z = -1;
+    parts.backShell.add(backHalf);
+
+    const bossCoords = [[-16.2, 16.2], [16.2, 16.2], [-16.2, -16.2], [16.2, -16.2]];
+    bossCoords.forEach(([bx, by]) => {
+      const fBoss = new THREE.Mesh(new THREE.CylinderGeometry(2.5, 2.5, 5.8, 24), clearShellMaterial);
+      fBoss.rotation.x = Math.PI / 2;
+      fBoss.position.set(bx, by, 2.9);
+      parts.frontShell.add(fBoss);
+
+      const bBoss = new THREE.Mesh(new THREE.CylinderGeometry(2.5, 2.5, 5.8, 24), clearShellMaterial);
+      bBoss.rotation.x = Math.PI / 2;
+      bBoss.position.set(bx, by, -2.9);
+      parts.backShell.add(bBoss);
+    });
+    setLayerProps(parts.frontShell, 3, false, false);
+    setLayerProps(parts.backShell, 3, false, false);
+
+    // 2. Detailed Green PCB & Gold SMD Components Visible Around Perimeter
+    const pcbBoard = new THREE.Mesh(
+      new RoundedBoxGeometry(36.6, 36.6, 1.6, 2, 2.0),
+      pcbGreenMat
+    );
+    pcbBoard.position.z = 0.2;
+    parts.pcb.add(pcbBoard);
+
+    // Repeated board components share two instanced draw calls.
+    const componentTransform=new THREE.Object3D();
+    for (const isGold of [true,false]) {
+      const chips=new THREE.InstancedMesh(
+        new THREE.BoxGeometry(isGold?1.4:1.8,isGold?.95:1.15,.8),isGold?goldContactMat:matteBlackMaterial,24
+      );
+      for(let j=0;j<24;j++) {
+        const i=j*2+(isGold?0:1),angle=i/48*Math.PI*2,rad=15.1+i%3*1.25;
+        componentTransform.position.set(Math.cos(angle)*rad,Math.sin(angle)*rad,1.4);
+        componentTransform.rotation.z=angle;componentTransform.updateMatrix();
+        chips.setMatrixAt(j,componentTransform.matrix);
+      }
+      parts.pcb.add(chips);
+    }
+
+    const speakerHousing = new THREE.Mesh(
+      new THREE.CylinderGeometry(7.2, 7.2, 2.2, 32),
+      brushedSteelMat
+    );
+    speakerHousing.rotation.x = Math.PI / 2;
+    speakerHousing.position.set(0, 3.8, -1.2);
+    parts.pcb.add(speakerHousing);
+
+    const sharedBackLabelTex = createBackLabelTexture();
+    const backCorePlateMat = matteBlackMaterial.clone();
+    backCorePlateMat.map = sharedBackLabelTex;
+    backCorePlateMat.color = new THREE.Color(0xffffff);
+
+    const backLabelPlate = new THREE.Mesh(
+      new RoundedBoxGeometry(24, 16, 1.2, 2, 1.5),
+      [
+        matteBlackMaterial, matteBlackMaterial,
+        matteBlackMaterial, matteBlackMaterial,
+        matteBlackMaterial, backCorePlateMat
+      ]
+    );
+    backLabelPlate.position.set(-4.0, -9.2, -3.6);
+    parts.pcb.add(backLabelPlate);
+    setLayerProps(parts.pcb, 1, true, true);
+
+    // 3. Inner Shielding & Topmost Flush AMOLED Screen
+    const innerShieldBody = new THREE.Mesh(
+      new RoundedBoxGeometry(31.2, 31.2, 2.2, 2, 3.2),
+      matteBlackMaterial
+    );
+    innerShieldBody.position.set(-1.0, 0, 3.4);
+    parts.faceplate.add(innerShieldBody);
+    setLayerProps(parts.faceplate, 2, false, false);
+
+    const amoledHousingShape = createRoundedRectShape(30.4, 30.4, 3.2);
+    const amoledHousingGeo = new THREE.ExtrudeGeometry(amoledHousingShape, {
+      depth: 2.0,
+      bevelEnabled: false,
+      curveSegments: 24
+    });
+    const amoledHousingMat = new THREE.MeshStandardMaterial({
+      color: 0x090a0d,
+      roughness: 0.35,
+      metalness: 0.05
+    });
+    const amoledBezel = new THREE.Mesh(amoledHousingGeo, amoledHousingMat);
+    amoledBezel.position.set(-1.0, 0, 4.4);
+    parts.controlWheel.add(amoledBezel);
+
+    const screenWidth = 29.8;
+    const screenHeight = 29.8;
+    const screenShape = createRoundedRectShape(screenWidth, screenHeight, 3.0);
+    const screenGeo = new THREE.ShapeGeometry(screenShape, 24);
+
+    const posAttr = screenGeo.attributes.position;
+    const uvAttr = screenGeo.attributes.uv;
+    for (let i = 0; i < posAttr.count; i++) {
+      const vx = posAttr.getX(i);
+      const vy = posAttr.getY(i);
+      uvAttr.setXY(i, (vx + screenWidth / 2) / screenWidth, (vy + screenHeight / 2) / screenHeight);
+    }
+    uvAttr.needsUpdate = true;
+
+    const amoledDisplayMat = new THREE.MeshBasicMaterial({
+      map: amoledTexture,
+      toneMapped: false,
+      polygonOffset: true,
+      polygonOffsetFactor: -4,
+      polygonOffsetUnits: -4
+    });
+    const amoledDisplayMesh = new THREE.Mesh(screenGeo, amoledDisplayMat);
+    amoledDisplayMesh.position.set(-1.0, 0, 6.52);
+    parts.controlWheel.add(amoledDisplayMesh);
+
+    amoledBezel.renderOrder = 2;
+    amoledDisplayMesh.renderOrder = 4;
+
+    // 4. Right-Side Cartridge Slot Receiver
+    const slotHousing = new THREE.Mesh(
+      new RoundedBoxGeometry(9.0, 23.2, 7.4, 3, 1.2),
+      matteBlackMaterial
+    );
+    slotHousing.position.set(16.0, -5.2, 0);
+    parts.cartridgeSlot.add(slotHousing);
+
+    for (let i = 0; i < 5; i++) {
+      const pin = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.3, 1.2), goldContactMat);
+      pin.position.set(18.2, -1.0 - i * 2.1, 0);
+      parts.cartridgeSlot.add(pin);
+    }
+    setLayerProps(parts.cartridgeSlot, 2, true, true);
+
+    // 5. Tactile Orange Eject Button (Interactive via Raycaster)
+    const sliderBase = new THREE.Mesh(
+      new RoundedBoxGeometry(4.4, 10.8, 5.4, 3, 1.2),
+      orangeSliderMaterial
+    );
+    sliderBase.position.set(20.4, 11.2, 0);
+    parts.sliderButton.add(sliderBase);
+
+    for (let i = -2; i <= 2; i++) {
+      const ridge = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.7, 4.1), orangeSliderMaterial);
+      ridge.position.set(22.5, 11.2 + i * 1.5, 0);
+      parts.sliderButton.add(ridge);
+    }
+    setLayerProps(parts.sliderButton, 2, true, true);
+
+    const steelCanvas=document.createElement('canvas');steelCanvas.width=512;steelCanvas.height=512;
+    const steelCtx=steelCanvas.getContext('2d'),steelPixels=steelCtx.createImageData(512,512);
+    for(let y=0;y<512;y++) for(let x=0;x<512;x++) {
+      const dx=x-256,dy=y-256,r=Math.hypot(dx,dy),angle=Math.atan2(dy,dx);
+      const brush=Math.sin(r*2.8)*7+Math.sin(r*6.1)*3;
+      const value=175+47*Math.cos(2*(angle-.6))+brush;
+      const offset=(y*512+x)*4;
+      steelPixels.data[offset]=value;steelPixels.data[offset+1]=value+2;steelPixels.data[offset+2]=value+5;steelPixels.data[offset+3]=255;
+    }
+    steelCtx.putImageData(steelPixels,0,0);
+    const steelTexture=new THREE.CanvasTexture(steelCanvas);steelTexture.colorSpace=THREE.SRGBColorSpace;
+    const screwSteel=new THREE.MeshPhysicalMaterial({map:steelTexture,metalness:1,roughness:.27,anisotropy:.7,anisotropyRotation:.6,envMapIntensity:2,bumpMap:steelTexture,bumpScale:.025,clearcoat:.12});
+
+    // 6. Corner Shell Screws
+    bossCoords.forEach(([sx, sy]) => {
+      const screw = new THREE.Mesh(
+        new THREE.CylinderGeometry(1.48, 1.62, 1.2, 48),
+        [brushedSteelMat,screwSteel,screwSteel]
+      );
+      screw.rotation.x = Math.PI / 2;
+      screw.position.set(sx, sy, 5.5);
+      parts.screws.add(screw);
+      const screwBevel=new THREE.Mesh(new THREE.TorusGeometry(1.46,.10,8,48),brushedSteelMat);
+      screwBevel.position.set(sx,sy,6.05);parts.screws.add(screwBevel);
+      const slot=new THREE.Mesh(new THREE.BoxGeometry(1.65,.18,.08),matteBlackMaterial);
+      slot.position.set(sx,sy,6.15); slot.rotation.z=Math.PI/4;
+      parts.screws.add(slot);
+    });
+    setLayerProps(parts.screws, 2, false, false);
+
+    // 7. Circular Metallic Keychain Ring
+    const absLoop = new THREE.Mesh(
+      new THREE.TorusGeometry(3.5, 1.25, 16, 32),
+      matteBlackMaterial
+    );
+    absLoop.position.set(13.5, 22.0, 0);
+    parts.keyring.add(absLoop);
+
+    const splitRing = new THREE.Mesh(
+      new THREE.TorusGeometry(5.6, 0.85, 16, 48),
+      brushedSteelMat
+    );
+    splitRing.rotation.x = Math.PI / 3;
+    splitRing.position.set(16.8, 25.0, 0);
+    parts.keyring.add(splitRing);
+
+    const circularKeyring = new THREE.Mesh(
+      new THREE.TorusGeometry(8.8, 0.9, 16, 64),
+      brushedSteelMat
+    );
+    circularKeyring.rotation.z = -0.35;
+    circularKeyring.position.set(23, 28, 0);
+    parts.keyring.add(circularKeyring);
+    setLayerProps(parts.keyring, 2, true, false);
+
+    // ============================================================================
+    // 8. 3D BRUSHED ALUMINUM DOCK TRAY & 8-CARTRIDGE COLLECTION
+    // ============================================================================
+    const dockSystemGroup = new THREE.Group();
+
+
+    const CARTRIDGE_SPACING = 22.0;
+    const DOCK_SCALE = .68;
+    const DOCK_ROTATION = new THREE.Euler(-.09,-.10,.01);
+    const DOCK_QUATERNION = new THREE.Quaternion().setFromEuler(DOCK_ROTATION);
+    let DOCK_Y = -30;
+    const DOCK_Z = 10.0;
+
+    // Brushed Aluminum Collection Tray Plinth (matches reference bottom tray)
+    const trayPlinth = new THREE.Mesh(
+      new RoundedBoxGeometry(186, 1.4, 46, 4, 1.0),
+      brushedTrayMat
+    );
+    trayPlinth.position.set(0, DOCK_Y - 8.5, DOCK_Z - 1.5);
+    trayPlinth.receiveShadow = true;
+    trayPlinth.castShadow = true;
+    dockSystemGroup.add(trayPlinth);
+
+    // Subtle recessed slot wells on tray
+    for (let i = 0; i < CARTRIDGE_REGISTRY.length; i++) {
+      const slotX = (i - (CARTRIDGE_REGISTRY.length - 1) / 2) * CARTRIDGE_SPACING;
+      const well = new THREE.Mesh(
+        new RoundedBoxGeometry(16.8, 0.25, 2.6, 2, 0.2),
+        matteBlackMaterial
+      );
+      well.position.set(slotX, DOCK_Y - 10.55, DOCK_Z);
+      trayPlinth.add(well);
+      well.position.y = .8;
+      well.position.z = 1.5;
+    }
+
+    // Analytic rounded-rectangle glow: narrow white core, colored bloom and falloff.
+    const haloMat = new THREE.ShaderMaterial({
+      uniforms:{glowColor:{value:new THREE.Color('#ff6b9d')}},
+      vertexShader:`varying vec2 vUv; void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+      fragmentShader:`varying vec2 vUv; uniform vec3 glowColor;
+        void main(){
+          vec2 p=(vUv-.5)*vec2(24.,21.);
+          vec2 q=abs(p)-vec2(9.8,8.3);
+          float d=length(max(q,0.))+min(max(q.x,q.y),0.)-2.2;
+          // Light is contained inside the molded body; contacts are outside this mask.
+          float shellMask=(1.-smoothstep(-.08,0.,d))*smoothstep(-1.65,-1.25,d);
+          float core=exp(-pow((d+.48)/.13,2.));
+          float nearGlow=exp(-pow((d+.65)/.5,2.))*.65;
+          float alpha=(core+nearGlow)*shellMask;
+          gl_FragColor=vec4(mix(glowColor,vec3(1.,.94,.88),core*.8),alpha);
+        }`,
+      transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,toneMapped:false
+    });
+    const spillCanvas=document.createElement('canvas');spillCanvas.width=128;spillCanvas.height=128;
+    const spillCtx=spillCanvas.getContext('2d'),spillGradient=spillCtx.createRadialGradient(64,64,0,64,64,64);
+    spillGradient.addColorStop(0,'rgba(255,255,255,.6)');spillGradient.addColorStop(.4,'rgba(255,255,255,.22)');spillGradient.addColorStop(1,'rgba(255,255,255,0)');
+    spillCtx.fillStyle=spillGradient;spillCtx.fillRect(0,0,128,128);
+    const selectionSpill=new THREE.Mesh(new THREE.PlaneGeometry(29,18),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(spillCanvas),color:'#ff6b9d',transparent:true,opacity:.22,depthWrite:false,blending:THREE.AdditiveBlending,toneMapped:false}));
+    selectionSpill.rotation.x=-Math.PI/2;dockSystemGroup.add(selectionSpill);
+
+    const selectionPointLight = new THREE.PointLight(0xff6b9d, 8, 28);
+    dockSystemGroup.add(selectionPointLight);
+
+    const cartridgeLineupGroup = new THREE.Group();
+    dockSystemGroup.add(cartridgeLineupGroup);
+
+    const cartridgeMeshes = [];
+    let carouselScrollX = 0;
+    let targetCarouselScrollX = window.innerWidth <= 900 && innerWidth<innerHeight ? 3.5*CARTRIDGE_SPACING-worldWidth/2+14 : 0;
+    carouselScrollX=targetCarouselScrollX;
+
+    function createSingleCartridge(track, index) {
+      const cartGroup = new THREE.Group();
+      cartGroup.scale.setScalar(DOCK_SCALE); // Scaled to fit all 8 cartridges cleanly across the tray
+      cartGroup.userData = {
+        index,
+        insertProgress: 0, // 0 = docked, 1 = seated in player
+        motionState: 'docked' // 'docked' | 'dragging' | 'inserting' | 'inserted' | 'ejecting'
+      };
+
+      const cartFrontHalf = createMoldedShellHalf(24, 21, 2.5, 1.2, 2.2, false);
+      cartGroup.add(cartFrontHalf);
+
+      const cartBackHalf = createMoldedShellHalf(24, 21, 2.5, 1.2, 2.2, false);
+      cartBackHalf.scale.z = -1;
+      cartGroup.add(cartBackHalf);
+      setLayerProps(cartFrontHalf, 3, false, false);
+      setLayerProps(cartBackHalf, 3, false, false);
+
+      const cartFrontArtMat = new THREE.MeshStandardMaterial({
+        map: createCartridgeFrontTexture(track),
+        roughness: 0.32
+      });
+      const cartBackArtMat = matteBlackMaterial.clone();
+      cartBackArtMat.map = sharedBackLabelTex;
+      cartBackArtMat.color = new THREE.Color(0xffffff);
+
+      const coreGeometry=new RoundedBoxGeometry(19.6,17.4,3.2,3,1.0);
+      const faceGroups=coreGeometry.groups.map(group=>({...group}));
+      coreGeometry.clearGroups();
+      coreGeometry.addGroup(0,faceGroups.slice(0,4).reduce((sum,group)=>sum+group.count,0),0);
+      coreGeometry.addGroup(faceGroups[4].start,faceGroups[4].count,1);
+      coreGeometry.addGroup(faceGroups[5].start,faceGroups[5].count,2);
+      const cartCore=new THREE.Mesh(coreGeometry,[matteBlackMaterial,cartFrontArtMat,cartBackArtMat]);
+      cartCore.renderOrder = 2;
+      cartCore.castShadow = true;
+      cartGroup.add(cartCore);
+
+      // Gold contact connector block on the left side facing the player slot
+      const connectorBlock = new THREE.Mesh(
+        new RoundedBoxGeometry(3.4, 13.5, 3.4, 2, 0.6),
+        matteBlackMaterial
+      );
+      connectorBlock.position.set(-12.2, 0, 0);
+      connectorBlock.renderOrder = 2;
+      connectorBlock.castShadow = true;
+      cartGroup.add(connectorBlock);
+
+      const contacts=new THREE.InstancedMesh(new THREE.BoxGeometry(2.2,2.1,3.65),goldContactMat,4);
+      const contactTransform=new THREE.Object3D();
+      for(let i=0;i<4;i++) {
+        contactTransform.position.set(-12.6,4.2-i*2.8,0);contactTransform.updateMatrix();
+        contacts.setMatrixAt(i,contactTransform.matrix);
+      }
+      contacts.renderOrder=2;cartGroup.add(contacts);
+
+      const innerLight=new THREE.Mesh(new THREE.PlaneGeometry(24,21),haloMat);
+      innerLight.position.z=1.65;innerLight.renderOrder=5;innerLight.visible=false;
+      cartGroup.add(innerLight);cartGroup.userData.innerLight=innerLight;
+
+      cartGroup.traverse((child) => {
+        child.userData.cartIndex = index;
+      });
+
+      return cartGroup;
+    }
+
+    function getCartridgeDockPos(idx) {
+      const dockX = (idx - (CARTRIDGE_REGISTRY.length - 1) / 2) * CARTRIDGE_SPACING + carouselScrollX;
+      return new THREE.Vector3(dockX, DOCK_Y, DOCK_Z);
+    }
+
+    CARTRIDGE_REGISTRY.forEach((track, idx) => {
+      const mesh = createSingleCartridge(track, idx);
+      mesh.position.copy(getCartridgeDockPos(idx));
+      cartridgeLineupGroup.add(mesh);
+      cartridgeMeshes.push(mesh);
+    });
+
+    // ============================================================================
+    // 9. DECLARATIVE HTML DOCK LABELS & EDITORIAL UI SYNCHRONIZATION
+    // ============================================================================
+    const dockLabelsGrid = document.getElementById('dock-labels-grid');
+    const heroCounter = document.getElementById('hero-counter');
+    const stateBadge = document.getElementById('state-badge');
+    const slotDropHint = document.getElementById('slot-drop-hint');
+
+    function renderDockCategoryLabels() {
+      CARTRIDGE_REGISTRY.forEach((track, idx) => {
+        let item = dockLabelsGrid.children[idx];
+        if (!item) {
+          item = document.createElement('button');
+          item.type = 'button';
+          item.className = 'cartridge-label';
+          item.innerHTML = `<strong>${track.category}</strong><small>${track.subtitle}</small>`;
+          item.addEventListener('click', () => handleCartridgeTap(idx));
+          item.addEventListener('focus', () => centerCartridge(idx));
+          dockLabelsGrid.appendChild(item);
+        }
+        item.setAttribute('aria-label', `Load ${track.category} cartridge ${track.id}`);
+        item.setAttribute('aria-pressed', String(AppState.selectedIndex === idx));
+      });
+    }
+    function centerCartridge(idx) {
+      targetCarouselScrollX = window.innerWidth <= 900 && innerWidth<innerHeight ? -((idx - 3.5) * CARTRIDGE_SPACING) : 0;
+    }
+    function projectToScreen(pos) {
+      const p = pos.clone().project(camera);
+      return {x:(p.x * .5 + .5) * innerWidth, y:(-.5 * p.y + .5) * innerHeight};
+    }
+    const projectionTemp = new THREE.Vector3();
+    function syncProjectedUI() {
+      const mobile = innerWidth <= 900 && innerWidth < innerHeight;
+      const labelWidth = innerWidth / worldWidth * CARTRIDGE_SPACING * (mobile ? 1.04 : .91);
+      CARTRIDGE_REGISTRY.forEach((track,idx) => {
+        const item = dockLabelsGrid.children[idx];
+        if (!item) return;
+        const p = projectToScreen(projectionTemp.set(getCartridgeDockPos(idx).x,DOCK_Y-(mobile?(innerHeight<700?6.5:8.5):7.0),DOCK_Z));
+        item.style.left = `${p.x}px`;
+        item.style.top = `${p.y}px`;
+        item.style.width = `${labelWidth}px`;
+        // Offscreen keyboard focus centers the carousel via the focus handler.
+      });
+      const collectionTop = projectToScreen(projectionTemp.set(0,DOCK_Y+(mobile?18:14),DOCK_Z)).y;
+      document.body.style.setProperty('--collection-top',`${collectionTop}px`);
+      const controlPoint = projectToScreen(projectionTemp.set(playerGroup.position.x,playerGroup.position.y-25 * playerGroup.scale.x,0));
+      document.body.style.setProperty('--screen-x',`${controlPoint.x}px`);
+      document.body.style.setProperty('--screen-y',`${controlPoint.y}px`);
+    }
+
+    function updateEditorialUI() {
+      const focusIdx = ['dragging','aligning'].includes(AppState.phase) ? AppState.selectedIndex : AppState.insertedIndex >= 0 ? AppState.insertedIndex : AppState.selectedIndex;
+      const track = CARTRIDGE_REGISTRY[focusIdx];
+
+      heroCounter.textContent = `${track.id} — 008`;
+
+      const phaseLabels = {
+        idle: 'IDLE',
+        selected: `SELECTED • #${track.id}`,
+        dragging: `DRAGGING • #${track.id}`,
+        aligning: `ALIGNING • #${track.id}`,
+        inserting: `LOADING • #${track.id}`,
+        booting: `BOOTING • #${track.id}`,
+        active: AppState.isPlayingAudio ? `PLAYING • ${track.category.toUpperCase()}` : `LOADED • ${track.category.toUpperCase()}`,
+        ejecting: 'EJECTING...'
+      };
+      stateBadge.textContent = phaseLabels[AppState.phase] || 'READY';
+
+      // Update 3D selection halo color
+      haloMat.uniforms.glowColor.value.set(CARTRIDGE_REGISTRY[AppState.selectedIndex].themeColor);
+      selectionSpill.material.color.copy(haloMat.uniforms.glowColor.value);
+      selectionPointLight.color.set(track.themeColor);
+
+      renderDockCategoryLabels();
+      const busy = isBusy();
+      document.querySelectorAll('.cartridge-label, #btn-prev-cart, #btn-next-cart').forEach(el => el.disabled=busy);
+      document.getElementById('accessible-play').textContent = AppState.insertedIndex < 0 ? 'Load / play' : AppState.isPlayingAudio ? 'Pause' : 'Play';
+      document.getElementById('accessible-play').disabled = busy;
+      document.getElementById('accessible-eject').disabled = AppState.insertedIndex < 0 || busy;
+      document.getElementById('archive-toggle').disabled = AppState.phase !== 'active';
+      document.getElementById('archive-toggle').setAttribute('aria-pressed',String(AppState.screenViewMode === 'archive'));
+      updateAmoledScreen();
+    }
+
+    // ============================================================================
+    // 10. CARTRIDGE INSERTION, EJECTION & 3D DRAG-TO-INSERT INTERACTION
+    // ============================================================================
+    let playerRecoilX = 0;
+
+    function startInsertingCartridge(idx) {
+      AppState.selectedIndex = idx;
+      AppState.insertedIndex = idx;
+      AppState.screenViewMode = 'player';
+      AppState.screenPage = 0; AppState.interactionCount = 0; AppState.challengeProgress = 0; AppState.challengeFeedback = 'Enter the four-button code.';
+      if(audioInitialized) Tone.Transport.seconds=0;
+      const mesh = cartridgeMeshes[idx];
+      mesh.userData.motionState = 'inserting';
+      AppState.playbackProgress = 0;
+      centerCartridge(idx);
+      playMechanicalSound('insert');
+      transitionState('aligning');
+    }
+
+    function triggerPhysicalEject() {
+      if (isBusy()) return;
+      if (AppState.insertedIndex === -1) {
+        playMechanicalSound('click');
+        return;
+      }
+      const idx = AppState.insertedIndex;
+      const mesh = cartridgeMeshes[idx];
+      mesh.userData.motionState = 'ejecting';
+      AppState.insertedIndex = -1;
+      playerRecoilX = 1.1; // Outward mechanical pop recoil
+      playMechanicalSound('eject');
+      toggleMusicPlayback(true);
+      transitionState('ejecting');
+    }
+
+    function handleCartridgeTap(idx) {
+      if (isBusy() || AppState.phase === 'dragging' || !CARTRIDGE_REGISTRY[idx]) return;
+      void initAudio();
+
+      AppState.selectedIndex = idx;
+
+      // Tapping the currently inserted cartridge ejects it
+      if (AppState.insertedIndex === idx) {
+        AppState.pendingInsertIndex = -1;
+        triggerPhysicalEject();
+        return;
+      }
+
+      // If another cartridge is inserted, eject it first and queue the new one
+      if (AppState.insertedIndex !== -1) {
+        AppState.pendingInsertIndex = idx;
+        triggerPhysicalEject();
+        return;
+      }
+
+      // Otherwise smoothly arc & slide this cartridge into the player
+      startInsertingCartridge(idx);
+    }
+
+    // --- RAYCASTER DRAG-TO-LOAD & TAP INTERACTION ---
+    const raycaster = new THREE.Raycaster();
+    const pointer = new THREE.Vector2();
+    const dragPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), -DOCK_Z);
+    const dragIntersectPoint = new THREE.Vector3();
+
+    let draggedCartIndex = -1;
+    let pointerDownPos = new THREE.Vector2();
+    let isPointerDraggingCart = false;
+
+    function updatePointerNDC(e) {
+      pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
+      pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
+    }
+
+    renderer.domElement.addEventListener('pointerdown', (e) => {
+      if (isBusy() || e.button !== 0) return;
+      renderer.domElement.setPointerCapture(e.pointerId);
+      void initAudio();
+      updatePointerNDC(e);
+      pointerDownPos.set(e.clientX, e.clientY);
+      raycaster.setFromCamera(pointer, camera);
+
+      // 1. Check if clicking the Orange Eject Button on the player
+      const orangeHits = raycaster.intersectObjects(parts.sliderButton.children, true);
+      if (orangeHits.length > 0) {
+        controls.enabled = false;
+        triggerPhysicalEject();
+        setTimeout(() => { controls.enabled = true; }, 150);
+        return;
+      }
+
+      // 2. Check if tapping the AMOLED Touch Screen
+      const screenHits = raycaster.intersectObject(amoledDisplayMesh, false);
+      if (screenHits.length > 0) {
+        controls.enabled = false;
+        const uv = screenHits[0].uv;
+        if (uv) {
+          // Check 3-dots archive toggle region
+          if (uv.x > 0.82 && uv.y > 0.25 && uv.y < 0.45) {
+            if(AppState.phase !== 'active') return;
+            AppState.screenViewMode = 'archive';
+            playMechanicalSound('click');
+            updateEditorialUI(); openModal('experience');
+          } else if (uv.y>=.23 && uv.y<=.28 && AppState.phase==='active') {
+            AppState.playbackProgress=THREE.MathUtils.clamp((uv.x-.082)/.84,0,1);
+            if(audioInitialized) Tone.Transport.seconds=AppState.playbackProgress*trackDuration();
+            updateAmoledScreen();
+          } else if (uv.y < 0.20 && uv.x < 0.34) {
+            // Previous cartridge shortcut
+            const prevIdx = (AppState.selectedIndex - 1 + CARTRIDGE_REGISTRY.length) % CARTRIDGE_REGISTRY.length;
+            handleCartridgeTap(prevIdx);
+          } else if (uv.y < 0.20 && uv.x > 0.66) {
+            // Next cartridge shortcut
+            const nextIdx = (AppState.selectedIndex + 1) % CARTRIDGE_REGISTRY.length;
+            handleCartridgeTap(nextIdx);
+          } else {
+            // Tap anywhere else on screen to Play/Pause (or auto-insert selected cartridge if none loaded)
+            if (AppState.insertedIndex === -1) {
+              handleCartridgeTap(AppState.selectedIndex);
+            } else {
+              playMechanicalSound('click');
+              document.getElementById('accessible-play').click();
+            }
+          }
+        }
+        setTimeout(() => { controls.enabled = true; }, 150);
+        return;
+      }
+
+      // 3. Check if grabbing one of the 8 Cartridges
+      const cartHits = raycaster.intersectObjects(cartridgeLineupGroup.children, true);
+      if (cartHits.length > 0) {
+        const hitIdx = cartHits[0].object.userData.cartIndex;
+        if (hitIdx !== undefined && cartridgeMeshes[hitIdx].userData.motionState === 'docked') {
+          draggedCartIndex = hitIdx;
+          AppState.selectedIndex = hitIdx;
+          isPointerDraggingCart = false;
+          controls.enabled = false; // Lock camera orbit while holding a cartridge
+          playMechanicalSound('pickup');
+          updateEditorialUI();
+        }
+      }
+    });
+
+    window.addEventListener('pointermove', (e) => {
+      // Subtle flat-UI 3D camera parallax when not dragging a cartridge
+      targetParallax.x = e.pointerType === 'touch' ? 0 : ((e.clientX / window.innerWidth) * 2 - 1) * .65;
+      targetParallax.y = e.pointerType === 'touch' ? 0 : (-(e.clientY / window.innerHeight) * 2 + 1) * .35;
+
+      if (draggedCartIndex === -1) return;
+
+      const moveDist = Math.hypot(e.clientX - pointerDownPos.x, e.clientY - pointerDownPos.y);
+      if (moveDist > 6 && !isPointerDraggingCart) {
+        isPointerDraggingCart = true;
+        // Only allow physical 3D dragging if the cartridge is currently in the dock
+        const mesh = cartridgeMeshes[draggedCartIndex];
+        if (mesh.userData.motionState === 'docked') {
+          mesh.userData.motionState = 'dragging';
+          transitionState('dragging');
+        }
+      }
+
+      if (isPointerDraggingCart) {
+        const mesh = cartridgeMeshes[draggedCartIndex];
+        if (mesh.userData.motionState === 'dragging') {
+          updatePointerNDC(e);
+          raycaster.setFromCamera(pointer, camera);
+          if (raycaster.ray.intersectPlane(dragPlane, dragIntersectPoint)) {
+            mesh.position.set(
+              THREE.MathUtils.clamp(dragIntersectPoint.x, -85, 85),
+              THREE.MathUtils.clamp(dragIntersectPoint.y, -28, 36),
+              DOCK_Z + 8
+            );
+            mesh.scale.setScalar(0.92);
+
+            // Check proximity to the right-side cartridge port on the player
+            const slotWorldPos = playerGroup.localToWorld(new THREE.Vector3(24,-5.2,0));
+            const distToSlot = mesh.position.distanceTo(slotWorldPos);
+
+            if (distToSlot < 25) {
+              if (AppState.phase !== 'aligning') transitionState('aligning');
+              slotDropHint.style.opacity = '1';
+              slotDropHint.style.left = `${Math.min(innerWidth-155,e.clientX+16)}px`;
+              slotDropHint.style.top = `${e.clientY - 16}px`;
+            } else {
+              if (AppState.phase !== 'dragging') transitionState('dragging');
+              slotDropHint.style.opacity = '0';
+            }
+          }
+        }
+      }
+    });
+
+    window.addEventListener('pointerup', () => {
+      if (draggedCartIndex === -1) return;
+      const idx = draggedCartIndex;
+      const mesh = cartridgeMeshes[idx];
+      draggedCartIndex = -1;
+      controls.enabled = true;
+      slotDropHint.style.opacity = '0';
+
+      if (!isPointerDraggingCart) {
+        // Quick tap on a cartridge -> trigger tap-to-insert / tap-to-eject
+        handleCartridgeTap(idx);
+        return;
+      }
+
+      if (mesh.userData.motionState === 'dragging') {
+        const slotWorldPos = playerGroup.localToWorld(new THREE.Vector3(24,-5.2,0));
+        const distToSlot = mesh.position.distanceTo(slotWorldPos);
+
+        if (distToSlot < 25) {
+          // Dropped near the player slot -> complete insertion!
+          mesh.userData.insertProgress = 0.56;
+          if (AppState.insertedIndex !== -1 && AppState.insertedIndex !== idx) {
+            AppState.pendingInsertIndex = idx;
+            mesh.userData.motionState = 'docked';
+            mesh.userData.insertProgress = 0;
+            triggerPhysicalEject();
+          } else {
+            startInsertingCartridge(idx);
+          }
+        } else {
+          // Dropped away from the slot -> return smoothly to dock tray
+          mesh.userData.motionState = 'docked';
+          mesh.userData.insertProgress = 0;
+          transitionState(AppState.insertedIndex !== -1 ? 'active' : 'selected');
+        }
+      }
+    });
+
+    // ============================================================================
+    function cancelDrag() {
+      if (draggedCartIndex < 0) return;
+      const mesh = cartridgeMeshes[draggedCartIndex];
+      mesh.userData.motionState='docked'; mesh.userData.insertProgress=0;
+      draggedCartIndex=-1; isPointerDraggingCart=false;
+      controls.enabled=true; slotDropHint.style.opacity='0';
+      transitionState(AppState.insertedIndex >= 0 ? 'active' : 'selected');
+    }
+    window.addEventListener('pointercancel',cancelDrag);
+    window.addEventListener('blur',cancelDrag);
+
+    // 11. UI CONTROLS, NAVIGATION & MODALS
+    // ============================================================================
+    const btnSound = document.getElementById('btn-sound');
+    const soundLabel = document.getElementById('sound-label');
+    const soundWaveIcon = document.getElementById('sound-wave-icon');
+
+    btnSound.addEventListener('click', async () => {
+      AppState.soundEnabled = !AppState.soundEnabled;
+      if (AppState.soundEnabled) {
+        await initAudio();
+        if (AppState.phase === 'active' && !AppState.isPlayingAudio) toggleMusicPlayback();
+      } else toggleMusicPlayback(true);
+      soundLabel.textContent = AppState.soundEnabled ? 'SOUND ON' : 'SOUND OFF';
+      btnSound.setAttribute('aria-pressed',String(AppState.soundEnabled));
+      btnSound.setAttribute('aria-label',AppState.soundEnabled ? 'Disable sound' : 'Enable sound');
+      updateEditorialUI();
+    });
+    document.getElementById('accessible-play').addEventListener('click', () => document.getElementById('instruction-play').click());
+    document.getElementById('accessible-eject').addEventListener('click', () => {
+      AppState.pendingInsertIndex=-1; triggerPhysicalEject();
+    });
+    document.getElementById('archive-toggle').addEventListener('click', () => {
+      if (AppState.phase !== 'active') return;
+      AppState.screenViewMode = AppState.screenViewMode === 'archive' ? 'player' : 'archive';
+      updateEditorialUI();
+      if(AppState.screenViewMode==='archive') openModal('experience');
+    });
+
+    document.getElementById('instruction-eject').addEventListener('click', () => {
+      triggerPhysicalEject();
+    });
+
+    document.getElementById('instruction-play').addEventListener('click', () => {
+      if (isBusy()) return;
+      void initAudio();
+      if (AppState.insertedIndex === -1) {
+        handleCartridgeTap(AppState.selectedIndex);
+      } else {
+        playMechanicalSound('click');
+        if (!AppState.soundEnabled) { btnSound.click(); return; }
+        toggleMusicPlayback(false);
+      }
+    });
+
+    function selectAdjacent(delta) {
+      if (isBusy() || ['dragging','aligning'].includes(AppState.phase)) return;
+      AppState.selectedIndex=(AppState.selectedIndex+delta+CARTRIDGE_REGISTRY.length)%CARTRIDGE_REGISTRY.length;
+      centerCartridge(AppState.selectedIndex);
+      playMechanicalSound('click');
+      transitionState(AppState.insertedIndex < 0 ? 'selected' : 'active');
+    }
+    document.getElementById('btn-prev-cart').addEventListener('click',()=>selectAdjacent(-1));
+    document.getElementById('btn-next-cart').addEventListener('click',()=>selectAdjacent(1));
+
+    // Modal Handler for ABOUT & BEHIND THE BUILD
+    const infoModal = document.getElementById('info-modal');
+    const modalContent = document.getElementById('modal-content');
+
+    let focusBeforeModal;
+    function openModal(type) {
+      focusBeforeModal=document.activeElement;
+      infoModal.dataset.view=type;
+      if (type === 'experience') {
+        // The accessible reader mirrors the exact content rendered on the screen.
+      } else if (type === 'about') {
+        modalContent.innerHTML = `
+          <span class="text-[10px] font-mono-tech uppercase tracking-[0.22em] text-orange-400">ABOUT THE ARCHIVE</span>
+          <h2 class="font-editorial text-3xl text-white mt-1 mb-4">A tactile personal archive.</h2>
+          <p class="text-sm text-stone-300 leading-relaxed mb-4">
+            Inspired by late-90s pocket audio players and transparent industrial design, <strong>benclips™</strong> reimagines a personal portfolio and curiosity cabinet as eight physical data cartridges.
+          </p>
+          <p class="text-sm text-stone-300 leading-relaxed">
+            Each cartridge stores a themed world—from 90s culture, Old School RuneScape, and custom hardware to horticulture, Chihuahuas, anime, and field notes. Drag or tap any cartridge into the side receiver to boot its audio-visual experience, or tap the <strong>[⋮]</strong> icon on the AMOLED screen to read the archive field notes.
+          </p>
+        `;
+      } else {
+        modalContent.innerHTML = `
+          <span class="text-[10px] font-mono-tech uppercase tracking-[0.22em] text-orange-400">TECHNICAL ARCHITECTURE</span>
+          <h2 class="font-editorial text-3xl text-white mt-1 mb-4">Behind the Build</h2>
+          <ul class="space-y-2.5 text-xs sm:text-sm text-stone-300 leading-relaxed">
+            <li>• <strong>Flat-Mated Polycarbonate Shell:</strong> Hollow extruded polycarbonate rims, molded ribs, visible PCB components, and engraved screw heads. Layered imagery supplies the studio without duplicate scenic meshes.</li>
+            <li>• <strong>Guarded State Machine:</strong> Manages <em>Idle, Selected, Dragging, Aligning, Inserting, Booting, Active,</em> and <em>Ejecting</em> states with automatic swap queuing.</li>
+            <li>• <strong>React Three Fiber:</strong> Owns the player, dock, lighting and frame lifecycle, reusing the original procedural model builders.</li>
+            <li>• <strong>1024×1024 Live AMOLED Canvas:</strong> Self-illuminated topmost display layer with dynamic procedural artwork, scrubbing, interactive UV touch zones, and shared audio, visual, story and interactive experiences. Playback refreshes at 10 Hz.</li>
+            <li>• <strong>Tone.js Chiptune & Foley Synth:</strong> Optional, lazily loaded original synth loops and mechanical foley. No commercial song recordings are included.</li>
+          </ul>
+        `;
+      }
+      infoModal.classList.remove('hidden');
+      infoModal.classList.add('flex');
+      document.querySelector('main').inert=true; document.querySelector('header').inert=true;
+      syncExperiencePanel();
+      document.getElementById('btn-close-modal').focus();
+    }
+
+    document.querySelectorAll('[data-nav]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const nav = btn.getAttribute('data-nav');
+        if (nav === 'collection') {
+          dockLabelsGrid.children[AppState.selectedIndex]?.focus();
+        } else {
+          openModal(nav);
+        }
+      });
+    });
+
+    document.getElementById('btn-info-mobile').addEventListener('click', () => openModal('about'));
+    document.getElementById('btn-close-modal').addEventListener('click', () => {
+      infoModal.classList.add('hidden');
+      infoModal.classList.remove('flex');
+      document.querySelector('main').inert=false; document.querySelector('header').inert=false;
+      AppState.screenViewMode='player'; updateEditorialUI();
+      focusBeforeModal?.focus();
+    });
+    infoModal.addEventListener('click', (e) => {
+      if (e.target === infoModal) {
+        document.getElementById('btn-close-modal').click();
+      }
+    });
+
+    // ============================================================================
+    function trackDuration() { return CARTRIDGE_REGISTRY[AppState.insertedIndex < 0 ? AppState.selectedIndex : AppState.insertedIndex].totalSecs; }
+    function interactionFeedback(experience) {
+      if(experience.action.kind==='memory') return AppState.challengeFeedback;
+      if(experience.action.kind==='bits') return `${AppState.interactionCount.toString(2).padStart(4,'0')} binary = ${AppState.interactionCount} decimal`;
+      return experience.action.messages[AppState.interactionCount % experience.action.messages.length];
+    }
+    function interactionControls(experience) {
+      if(!experience.action) return '';
+      if(experience.action.kind==='memory') return `<div class="interaction-controls">${[1,2,3,4].map(n=>`<button data-pad="${n}" aria-label="Memory button ${n}">${n}</button>`).join('')}</div>`;
+      if(experience.action.kind==='bits') return `<div class="interaction-controls">${[8,4,2,1].map(bit=>`<button data-bit="${bit}" aria-label="Toggle bit ${bit}" aria-pressed="${Boolean(AppState.interactionCount & bit)}">${AppState.interactionCount & bit ? '1' : '0'}<small>${bit}</small></button>`).join('')}</div>`;
+      return `<button class="archive-action" id="experience-action">${experience.action.label}</button>`;
+    }
+    function currentExperience() {
+      const track=CARTRIDGE_REGISTRY[AppState.insertedIndex < 0 ? AppState.selectedIndex : AppState.insertedIndex];
+      return {track,experience:EXPERIENCES[track.experienceId]};
+    }
+    function syncExperiencePanel() {
+      if (infoModal.dataset.view !== 'experience' || infoModal.classList.contains('hidden')) return;
+      const {track,experience}=currentExperience();
+      if (!experience) return;
+      const entry=experience.entries[AppState.screenPage % experience.entries.length];
+      modalContent.innerHTML=`<span>${track.id} / ${track.category} · ${experience.mode}</span>
+        <h2>${entry.title}</h2><p>${entry.text}</p>
+        ${experience.action ? `<p id="interaction-feedback" role="status">${interactionFeedback(experience)}</p>${interactionControls(experience)}` : ''}
+        <div class="archive-pagination"><button id="note-prev" aria-label="Previous field note">← Previous</button><span>${AppState.screenPage+1} / ${experience.entries.length}</span><button id="note-next" aria-label="Next field note">Next →</button></div>
+        <p class="audio-caption">${experience.mode==='audio' ? 'Original synthesized loop · enable sound to listen.' : 'Field notes from the collection · illustrated on the player.'}</p>`;
+      const changePage=delta=>{
+        AppState.screenPage=(AppState.screenPage+delta+experience.entries.length)%experience.entries.length;
+        syncExperiencePanel(); updateAmoledScreen();
+        document.getElementById(delta>0?'note-next':'note-prev').focus();
+      };
+      document.getElementById('note-prev').onclick=()=>changePage(-1);
+      document.getElementById('note-next').onclick=()=>changePage(1);
+      modalContent.querySelectorAll('[data-pad]').forEach(button=>button.onclick=()=>{
+        const value=Number(button.dataset.pad);
+        const sequence=experience.action.sequence;
+        if(AppState.challengeProgress===sequence.length) AppState.challengeProgress=0;
+        if(value===sequence[AppState.challengeProgress]) {
+          AppState.challengeProgress++;
+          AppState.challengeFeedback=AppState.challengeProgress===sequence.length ? 'Quest complete. Code remembered.' : `${AppState.challengeProgress} / ${sequence.length} correct. Keep going.`;
+        } else {
+          AppState.challengeProgress=0; AppState.challengeFeedback='A wrong turn. Try the code again: 1 → 3 → 2 → 1.';
+        }
+        playMechanicalSound('click');syncExperiencePanel();updateAmoledScreen();
+        modalContent.querySelector(`[data-pad="${value}"]`).focus();
+      });
+      modalContent.querySelectorAll('[data-bit]').forEach(button=>button.onclick=()=>{
+        const bit=Number(button.dataset.bit);AppState.interactionCount ^= bit;
+        playMechanicalSound('click');syncExperiencePanel();updateAmoledScreen();
+        modalContent.querySelector(`[data-bit="${bit}"]`).focus();
+      });
+      const action=document.getElementById('experience-action');
+      if(action) action.onclick=()=>{
+        AppState.interactionCount=(AppState.interactionCount+1)%experience.action.messages.length;
+        playMechanicalSound('click'); syncExperiencePanel(); updateAmoledScreen();
+        document.getElementById('experience-action').focus();
+      };
+    }
+    document.addEventListener('keydown', e => {
+      if (!infoModal.classList.contains('hidden')) {
+        if (e.key==='Escape') document.getElementById('btn-close-modal').click();
+        if (e.key==='Tab') {
+          const controls=Array.from(infoModal.querySelectorAll('button:not(:disabled),a[href],input'));
+          const first=controls[0],last=controls.at(-1);
+          if(e.shiftKey && document.activeElement===first) {e.preventDefault();last.focus();}
+          else if(!e.shiftKey && document.activeElement===last) {e.preventDefault();first.focus();}
+        }
+        return;
+      }
+      if (e.key==='Escape') { cancelDrag(); if(!isBusy()) triggerPhysicalEject(); }
+      if (e.target.closest('.cartridge-label') && ['ArrowLeft','ArrowRight'].includes(e.key)) {
+        e.preventDefault(); selectAdjacent(e.key==='ArrowRight'?1:-1);
+        dockLabelsGrid.children[AppState.selectedIndex]?.focus();
+      }
+    });
+
+    // 12. RENDER LOOP & TWO-STAGE MECHANICAL CHOREOGRAPHY
+    // ============================================================================
+    transitionState('selected');
+    const clock = new THREE.Clock();
+    let lastScreenUpdate = 0;
+    let cameraFocus = 1;
+
+    function easeInOutCubic(x) {
+      return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+    }
+    function easeOutBack(x) {
+      const c1 = 1.45;
+      const c3 = c1 + 1;
+      return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
+    }
+
+    function animate() {
+
+      const dt = Math.min(clock.getDelta(), 0.1);
+      const t = clock.getElapsedTime();
+
+      // Smooth carousel scroll
+      carouselScrollX += (targetCarouselScrollX - carouselScrollX) * (1 - Math.exp(-12 * dt));
+
+      // Responsive player horizontal offset (centered on mobile, right-of-editorial-copy on desktop)
+      const mobile = window.innerWidth <= 900 && innerWidth < innerHeight;
+      const desiredPlayerX = mobile ? -1.5 : worldWidth * 0.045;
+      PLAYER_BASE_POS.y = worldHeight * (mobile ? (innerHeight<700?.05:.005) : .09);
+      DOCK_Y = worldHeight * (mobile ? (innerHeight<700?-.35:-.31) : -.245);
+      playerGroup.scale.setScalar(mobile ? 1 : 1.2);
+      playerGroup.rotation.set(-.035,-.10,.015);
+      trayPlinth.position.y = DOCK_Y - 8.5;
+      PLAYER_BASE_POS.x += (desiredPlayerX - PLAYER_BASE_POS.x) * (1 - Math.exp(-8 * dt));
+
+      // Keep studio props visible across viewports, scaled slightly on smaller screens
+
+
+      // Smooth pointer parallax for a tactile flat-UI 3D presentation
+      pointerParallax.lerp(reducedMotion.matches ? new THREE.Vector2() : targetParallax, 1 - Math.exp(-6 * dt));
+      const focusTarget = reducedMotion.matches ? 1 : AppState.phase === 'active' ? .985 : 1;
+      cameraFocus += (focusTarget-cameraFocus)*(1-Math.exp(-4*dt));
+      camera.position.set(
+        cameraPosBase.x + pointerParallax.x,
+        cameraPosBase.y + pointerParallax.y,
+        cameraPosBase.z * cameraFocus
+      );
+
+      // Spring-damped mechanical recoil when cartridge snaps in or ejects
+      playerRecoilX += (0 - playerRecoilX) * (1 - Math.exp(-14 * dt));
+      playerGroup.position.set(
+        PLAYER_BASE_POS.x + playerRecoilX,
+        PLAYER_BASE_POS.y,
+        PLAYER_BASE_POS.z
+      );
+
+      deskShadowCatcher.position.set(playerGroup.position.x,playerGroup.position.y-23.7*playerGroup.scale.x,-8);
+
+      // Subtle keyring pendulum sway from player recoil
+      parts.keyring.rotation.z = THREE.MathUtils.lerp(parts.keyring.rotation.z, -playerRecoilX * 0.08, 1 - Math.exp(-10 * dt));
+
+      // Update Selection Halo Frame on the Dock Tray
+      const selDockPos = getCartridgeDockPos(AppState.selectedIndex);
+      const selectedCartridge=cartridgeMeshes[AppState.selectedIndex];
+      const isSelectedInDock=selectedCartridge.userData.motionState==='docked';
+      cartridgeMeshes.forEach((cartridge,index)=>{cartridge.userData.innerLight.visible=index===AppState.selectedIndex;});
+      selectionPointLight.position.copy(selectedCartridge.position);
+      selectionSpill.visible=isSelectedInDock;
+      selectionSpill.position.set(selDockPos.x,DOCK_Y-7.7,DOCK_Z+6);
+      selectionPointLight.intensity = isSelectedInDock ? 7 + (reducedMotion.matches ? 0 : Math.sin(t * 4) * 1.5) : 0;
+
+      // Slot Staging & Seated Target Coordinates
+      // Receiver positions and cartridge orientation share the player transform.
+      playerGroup.updateMatrixWorld(true);
+      const STAGING_POS=playerGroup.localToWorld(new THREE.Vector3(41,-5.2,0));
+      const SEATED_POS=playerGroup.localToWorld(new THREE.Vector3(21.8,-5.2,0));
+
+      let anyEjecting = false;
+
+      cartridgeMeshes.forEach((mesh, idx) => {
+        const mState = mesh.userData.motionState;
+        if (mState === 'dragging') return; // Controlled directly by pointer raycaster
+
+        const dockPos = getCartridgeDockPos(idx);
+        const isSelected = AppState.selectedIndex === idx;
+        if (isSelected) dockPos.y += 0.9;
+
+        if (mState === 'inserting') {
+          mesh.userData.insertProgress = Math.min(1, mesh.userData.insertProgress + dt * (reducedMotion.matches ? 5 : .9));
+          if (mesh.userData.insertProgress >= .58 && AppState.phase === 'aligning') transitionState('inserting');
+          if (mesh.userData.insertProgress >= 1) {
+            mesh.userData.motionState = 'inserted';
+            playerRecoilX = -1.35; // Crisp mechanical snap recoil to the left
+            playMechanicalSound('snap');
+            AppState.bootTimer = 0;
+            transitionState('booting');
+          }
+        } else if (mState === 'ejecting') {
+          anyEjecting = true;
+          mesh.userData.insertProgress = Math.max(0, mesh.userData.insertProgress - dt * (reducedMotion.matches ? 5 : 1.3));
+          if (mesh.userData.insertProgress <= 0) {
+            mesh.userData.motionState = 'docked';
+            if (AppState.pendingInsertIndex === -1) {
+              transitionState('selected');
+            }
+          }
+        }
+
+        const p = mesh.userData.insertProgress;
+
+        if (p <= 0.0001) {
+          // Seated in the Brushed Aluminum Collection Dock
+          mesh.position.lerp(dockPos, 1 - Math.exp(-12 * dt));
+          mesh.scale.lerp(new THREE.Vector3(DOCK_SCALE, DOCK_SCALE, DOCK_SCALE), 1 - Math.exp(-12 * dt));
+          mesh.quaternion.copy(DOCK_QUATERNION);
+        } else if (p < 0.58) {
+          // Stage 1: Lift out of dock tray, scale up to 1:1 physical size, and arc around to the right-side port
+          const u = easeInOutCubic(p / 0.58);
+          const arcPos = new THREE.Vector3().lerpVectors(dockPos, STAGING_POS, u);
+          arcPos.z += Math.sin(u * Math.PI) * (reducedMotion.matches ? 0 : 10.0);
+          arcPos.y += Math.sin(u * Math.PI) * (reducedMotion.matches ? 0 : 4.0);
+          mesh.position.copy(arcPos);
+          const sc = THREE.MathUtils.lerp(DOCK_SCALE, playerGroup.scale.x, u);
+          mesh.scale.setScalar(sc);
+          mesh.quaternion.slerpQuaternions(DOCK_QUATERNION,playerGroup.quaternion,u);
+        } else {
+          // Stage 2: Aligned with the slot — slide horizontally along X into the receiver
+          const rawU = (p - 0.58) / 0.42;
+          const u = mState === 'inserting' ? easeOutBack(rawU) : easeInOutCubic(rawU);
+          mesh.position.lerpVectors(STAGING_POS, SEATED_POS, u);
+          mesh.scale.copy(playerGroup.scale);
+          mesh.quaternion.copy(playerGroup.quaternion);
+        }
+      });
+
+      // Handle Booting -> Active transition
+      if (AppState.phase === 'booting') {
+        AppState.bootTimer += dt;
+        updateAmoledScreen();
+        if (AppState.bootTimer >= 0.42) {
+          transitionState('active');
+          toggleMusicPlayback(false);
+        }
+      }
+
+      // If a cartridge swap was queued, insert the new cartridge once the previous one finishes ejecting
+      if (AppState.pendingInsertIndex !== -1 && !anyEjecting) {
+        const nextIdx = AppState.pendingInsertIndex;
+        AppState.pendingInsertIndex = -1;
+        startInsertingCartridge(nextIdx);
+      }
+
+      // Orange slider button depresses when cartridge is seated
+      const activeMesh = AppState.insertedIndex !== -1 ? cartridgeMeshes[AppState.insertedIndex] : null;
+      const slideDepth = activeMesh && activeMesh.userData.insertProgress > 0.65
+        ? (activeMesh.userData.insertProgress - 0.65) / 0.35
+        : 0;
+      const sliderTargetY = -2.4 * THREE.MathUtils.clamp(slideDepth, 0, 1);
+      parts.sliderButton.position.lerp(new THREE.Vector3(0, sliderTargetY, 0), 1 - Math.exp(-14 * dt));
+
+      // Live playback scrubber update
+      if (AppState.isPlayingAudio && AppState.insertedIndex !== -1) {
+        const curTrack = CARTRIDGE_REGISTRY[AppState.insertedIndex];
+        AppState.playbackProgress = (Tone.Transport.seconds % curTrack.totalSecs) / curTrack.totalSecs;
+        if (t - lastScreenUpdate > .1) { updateAmoledScreen(); lastScreenUpdate = t; }
+      }
+
+      controls.update();
+      syncProjectedUI();
+    }
+
+    function Player() { return React.createElement('primitive',{object:playerGroup,dispose:null}); }
+    function CartridgeCollection() { return React.createElement('primitive',{object:dockSystemGroup,dispose:null}); }
+    function StudioLighting() {
+      return React.createElement(React.Fragment,null,
+        ...[sunKeyLight,studioFillLight,warmRimLight,deskShadowCatcher].map(object=>React.createElement('primitive',{key:object.uuid,object,dispose:null}))
+      );
+    }
+    function SceneAssembly() {
+      useFrame(animate);
+      return React.createElement(React.Fragment,null,React.createElement(Player),React.createElement(CartridgeCollection),React.createElement(StudioLighting));
+    }
+    const fiberRoot = createRoot(renderer.domElement);
+    function configureRoot() {
+      fiberRoot.configure({ gl:renderer,scene,camera,shadows:'soft',dpr:Math.min(devicePixelRatio,1.5),
+        size:{width:innerWidth,height:innerHeight},frameloop:document.hidden?'never':'always' });
+    }
+    configureRoot();
+    fiberRoot.render(React.createElement(SceneAssembly));
+    document.addEventListener('visibilitychange',configureRoot);
+    document.getElementById('scene-loading').hidden = true;
+
+    window.addEventListener('resize', () => {
+      computeResponsiveFraming();
+      centerCartridge(AppState.selectedIndex);
+      camera.position.copy(cameraPosBase);
+      controls.target.copy(cameraTargetBase);
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      configureRoot();
+    });
+  </script>
+</body>
+</html>
